@@ -6,6 +6,9 @@ import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 
 object AppRepositoryImpl : AppRepository {
+
+    val apiService = ApiFactory.apiService
+
     override suspend fun getRepositories(): List<Repo> {
         TODO("Not yet implemented")
     }
@@ -23,6 +26,7 @@ object AppRepositoryImpl : AppRepository {
     }
 
     override suspend fun signIn(token: String): UserInfo {
+        val user = apiService.getListRepos(token)
         TODO("Not yet implemented")
     }
 }
