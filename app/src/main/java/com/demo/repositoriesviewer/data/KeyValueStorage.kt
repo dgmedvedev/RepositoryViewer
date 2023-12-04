@@ -1,5 +1,5 @@
 package com.demo.repositoriesviewer.data
 
 class KeyValueStorage {
-    var authToken: String?
+    var authToken: String? = null
 }
