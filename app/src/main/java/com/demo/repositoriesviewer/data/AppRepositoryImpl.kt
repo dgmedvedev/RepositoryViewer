@@ -1,6 +1,7 @@
 package com.demo.repositoriesviewer.data
 
 import android.content.Context
+import android.util.Log
 import androidx.core.content.ContextCompat.getString
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
@@ -10,24 +11,18 @@ import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 
-class AppRepositoryImpl(context: Context) : AppRepository {
+class AppRepositoryImpl(private val context: Context) : AppRepository {
 
     private val apiService = ApiFactory.apiService
 
     private val mapper = RepoMapper()
-    private val user = "dgmedvedev"
     private val token = ""
-    private val authorizationHeader = String.format(
-        getString(context, R.string.authorization_header),
-        token
-    )
 
     override suspend fun getRepositories(): List<Repo> {
-        val fullListReposDto = apiService.getFullListRepos(user)
+        val userName = signIn(token).name
+        Log.d("TEST_RETROFIT", "Authorization OK, userName - $userName")
+        val fullListReposDto = apiService.getFullListRepos(userName)
         return mapper.mapListReposDtoToListRepos(fullListReposDto)
-
-//        val listReposDto = apiService.getListRepos(authorizationHeader)
-//        return mapper.mapListReposDtoToListRepos(listReposDto)
     }
 
     override suspend fun getRepository(repoId: String): RepoDetails {
@@ -50,6 +45,11 @@ class AppRepositoryImpl(context: Context) : AppRepository {
     }
 
     override suspend fun signIn(token: String): UserInfo {
-        TODO("Not yet implemented")
+        val authorizationHeader = String.format(
+            getString(context, R.string.authorization_header),
+            token
+        )
+        val ownerDto = apiService.getOwnerDto(authorizationHeader)
+        return mapper.ownerDtoToUserInfo(ownerDto)
     }
 }

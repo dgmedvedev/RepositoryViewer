@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.data.mapper
 
+import com.demo.repositoriesviewer.data.network.model.OwnerDto
 import com.demo.repositoriesviewer.data.network.model.RepoDto
 import com.demo.repositoriesviewer.domain.entities.License
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -12,27 +13,27 @@ class RepoMapper {
         return listReposDto.map { repoDtoToRepo(it) }
     }
 
+    fun ownerDtoToUserInfo(ownerDto: OwnerDto) = UserInfo(
+        name = ownerDto.login
+    )
+
     private fun repoDtoToRepo(repoDto: RepoDto) = Repo(
         id = repoDto.id,
-        repoDetailsDtoToRepoDetails(repoDto)
+        repoDetails = repoDetailsDtoToRepoDetails(repoDto)
     )
 
     private fun repoDetailsDtoToRepoDetails(repoDto: RepoDto) = RepoDetails(
-        repoDto.forksCount,
-        repoDto.stargazersCount,
-        repoDto.watchersCount,
-        repoDto.branchName,
-        repoDto.name,
-        repoDto.url,
-        repoLicenseDtoToLicense(repoDto),
-        repoOwnerDtoToUserInfo(repoDto)
+        forks = repoDto.forksCount,
+        stars = repoDto.stargazersCount,
+        watchers = repoDto.watchersCount,
+        branchName = repoDto.branchName,
+        name = repoDto.name,
+        url = repoDto.url,
+        license = licenseDtoToLicense(repoDto),
+        userInfo = ownerDtoToUserInfo(repoDto.owner)
     )
 
-    private fun repoLicenseDtoToLicense(repoDto: RepoDto) = License(
-        repoDto.license?.spdxId
-    )
-
-    private fun repoOwnerDtoToUserInfo(repoDto: RepoDto) = UserInfo(
-        repoDto.owner.login
+    private fun licenseDtoToLicense(repoDto: RepoDto) = License(
+        spdxId = repoDto.license?.spdxId
     )
 }

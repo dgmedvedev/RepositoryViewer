@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.data.network
 
+import com.demo.repositoriesviewer.data.network.model.OwnerDto
 import com.demo.repositoriesviewer.data.network.model.RepoDto
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -16,7 +17,15 @@ interface ApiService {
     ): List<RepoDto>
 
     @GET("users/{user}/repos")
-    suspend fun getFullListRepos(@Path("user") user: String?): List<RepoDto>
+    suspend fun getFullListRepos(
+        @Path("user") user: String?,
+        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
+    ): List<RepoDto>
+
+    @GET("user")
+    suspend fun getOwnerDto(
+        @Header(HEADER_PARAM_AUTHORIZATION) authorization: String?
+    ): OwnerDto
 
     companion object {
         private const val HEADER_PARAM_AUTHORIZATION = "Authorization"
