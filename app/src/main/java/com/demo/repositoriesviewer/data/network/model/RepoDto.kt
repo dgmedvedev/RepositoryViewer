@@ -6,41 +6,41 @@ import com.google.gson.annotations.SerializedName
 data class RepoDto(
     @SerializedName("id")
     @Expose
-    private val id: Int? = null,
-
-    @SerializedName("name")
-    @Expose
-    private val name: String? = null,
-
-    @SerializedName("owner")
-    @Expose
-    private val owner: OwnerDto? = null,
-
-    @SerializedName("html_url")
-    @Expose
-    private val htmlUrl: String? = null,
-
-    @SerializedName("description")
-    @Expose
-    private val description: String? = null,
-
-    @SerializedName("stargazers_count")
-    @Expose
-    private val stargazersCount: Int? = null,
-
-    @SerializedName("watchers_count")
-    @Expose
-    private val watchersCount: Int? = null,
+    val id: String,
 
     @SerializedName("forks_count")
     @Expose
-    private val forksCount: Int? = null,
+    val forksCount: Int,
 
-    @SerializedName("license")
+    @SerializedName("stargazers_count")
     @Expose
-    private val license: LicenseDto? = null,
+    val stargazersCount: Int,
+
+    @SerializedName("watchers_count")
+    @Expose
+    val watchersCount: Int,
 
     @SerializedName("default_branch")
     @Expose
-    private val defaultBranch: String? = null
+    val branchName: String,
+
+    @SerializedName("name")
+    @Expose
+    val name: String,
+
+    @SerializedName("html_url")
+    @Expose
+    val url: String,
+
+    @SerializedName("description")
+    @Expose
+    val description: String?,
+
+    @SerializedName("license")
+    @Expose
+    val license: LicenseDto?,
+
+    @SerializedName("owner")
+    @Expose
+    val owner: OwnerDto
 )

@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
-import com.demo.repositoriesviewer.data.network.ApiFactory
+import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -14,22 +14,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val authorizationHeader = String.format(
-            getString(R.string.authorization_header),
-            "TODO() - token"
-        )
-        val user = "dgmedvedev"
-
-        val apiService = ApiFactory.apiService
+        val repository = AppRepositoryImpl(this)
 
         lifecycleScope.launch {
-            val listRepositories = apiService.getListRepos(authorizationHeader)
-            val fullListRepositories = apiService.getFullListRepos(user)
+            val listRepos = repository.getRepositories()
 
-            for ((i, repo) in fullListRepositories.withIndex()) {
-                Log.d("TEST_RETROFIT", "repo${i + 1}: $repo")
-            }
-            for ((i, repo) in listRepositories.withIndex()) {
+            for ((i, repo) in listRepos.withIndex()) {
                 Log.d("TEST_RETROFIT", "repo${i + 1}: $repo")
             }
         }

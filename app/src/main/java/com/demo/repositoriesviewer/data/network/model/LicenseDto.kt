@@ -6,5 +6,5 @@ import com.google.gson.annotations.SerializedName
 data class LicenseDto(
     @SerializedName("spdx_id")
     @Expose
-    val spdxId: String? = null
+    val spdxId: String?
 )
