@@ -14,9 +14,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val token = ""
+
         val repository = AppRepositoryImpl(this)
 
         lifecycleScope.launch {
+            repository.signIn(token)
             val listRepos = repository.getRepositories()
 
             for ((i, repo) in listRepos.withIndex()) {

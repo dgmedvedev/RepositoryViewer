@@ -9,16 +9,9 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("user/repos")
+    @GET("users/{username}/repos")
     suspend fun getListRepos(
-        @Header(HEADER_PARAM_AUTHORIZATION) authorization: String?,
-        @Query(QUERY_PARAM_AFFILIATION) affiliation: String = "owner",
-        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
-    ): List<RepoDto>
-
-    @GET("users/{user}/repos")
-    suspend fun getFullListRepos(
-        @Path("user") user: String?,
+        @Path(PATH_PARAM_USERNAME) userName: String?,
         @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
     ): List<RepoDto>
 
@@ -29,7 +22,7 @@ interface ApiService {
 
     companion object {
         private const val HEADER_PARAM_AUTHORIZATION = "Authorization"
-        private const val QUERY_PARAM_AFFILIATION = "affiliation"
         private const val QUERY_PARAM_PER_PAGE = "per_page"
+        private const val PATH_PARAM_USERNAME = "username"
     }
 }

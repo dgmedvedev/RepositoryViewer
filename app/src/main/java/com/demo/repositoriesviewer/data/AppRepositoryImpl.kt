@@ -1,7 +1,6 @@
 package com.demo.repositoriesviewer.data
 
 import android.content.Context
-import android.util.Log
 import androidx.core.content.ContextCompat.getString
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
@@ -11,17 +10,17 @@ import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 
-class AppRepositoryImpl(private val context: Context) : AppRepository {
+class AppRepositoryImpl(
+    private val context: Context
+) : AppRepository {
 
     private val apiService = ApiFactory.apiService
-
     private val mapper = RepoMapper()
-    private val token = ""
+
+    lateinit var userName: String
 
     override suspend fun getRepositories(): List<Repo> {
-        val userName = signIn(token).name
-        Log.d("TEST_RETROFIT", "Authorization OK, userName - $userName")
-        val fullListReposDto = apiService.getFullListRepos(userName)
+        val fullListReposDto = apiService.getListRepos(userName)
         return mapper.mapListReposDtoToListRepos(fullListReposDto)
     }
 
@@ -33,7 +32,12 @@ class AppRepositoryImpl(private val context: Context) : AppRepository {
                 repoDetails = repo.repoDetails
             }
         }
-        return repoDetails ?: throw java.lang.Exception("Repository id = $repoId not found")
+        return repoDetails ?: throw RuntimeException(
+            String.format(
+                getString(context, R.string.id_not_found),
+                repoId
+            )
+        )
     }
 
     override suspend fun getRepositoryReadme(
@@ -41,7 +45,7 @@ class AppRepositoryImpl(private val context: Context) : AppRepository {
         repositoryName: String,
         branchName: String
     ): String {
-        TODO("Not yet implemented")
+        return "$ownerName+\n+$repositoryName+\n+$branchName"
     }
 
     override suspend fun signIn(token: String): UserInfo {
@@ -50,6 +54,7 @@ class AppRepositoryImpl(private val context: Context) : AppRepository {
             token
         )
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
+        userName = ownerDto.login
         return mapper.ownerDtoToUserInfo(ownerDto)
     }
 }
