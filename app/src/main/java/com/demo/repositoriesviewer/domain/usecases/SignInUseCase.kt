@@ -5,7 +5,7 @@ import com.demo.repositoriesviewer.domain.repository.AppRepository
 
 class SignInUseCase(private val appRepository: AppRepository) {
 
-    operator fun invoke(token: String): UserInfo {
+    suspend operator fun invoke(token: String): UserInfo {
         return appRepository.signIn(token)
     }
 }

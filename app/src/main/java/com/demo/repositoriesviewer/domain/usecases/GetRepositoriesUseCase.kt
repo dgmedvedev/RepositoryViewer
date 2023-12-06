@@ -5,7 +5,7 @@ import com.demo.repositoriesviewer.domain.repository.AppRepository
 
 class GetRepositoriesUseCase(private val appRepository: AppRepository) {
 
-    operator fun invoke(): List<Repo> {
+    suspend operator fun invoke(): List<Repo> {
         return appRepository.getRepositories()
     }
 }

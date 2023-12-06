@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Repositories Viewer</string>
+    <string name="authorization_header"> token %s</string>
+    <string name="id_not_found">Repository id = %s not found</string>
 </resources>
