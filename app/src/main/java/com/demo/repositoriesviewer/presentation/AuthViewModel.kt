@@ -1,11 +1,12 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.Flow
+import com.demo.repositoriesviewer.R
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
         get() = _state
@@ -13,6 +14,13 @@ class AuthViewModel : ViewModel() {
     //val actions: Flow<Action>
 
     fun onSignButtonPressed() {
+        if (token.value.isNullOrBlank()) {
+            _state.value = State.InvalidInput(
+                getApplication<Application>()
+                    .getString(R.string.value_not_entered)
+            )
+            return
+        }
         _state.value = State.Loading
     }
 
