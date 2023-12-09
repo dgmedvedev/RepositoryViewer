@@ -1,17 +1,24 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.app.Application
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.demo.repositoriesviewer.R
+import com.demo.repositoriesviewer.data.KeyValueStorage
+import com.demo.repositoriesviewer.domain.repository.AppRepository
+import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
+import kotlinx.coroutines.flow.Flow
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
+class AuthViewModel(private val application: Application) : AndroidViewModel(application) {
+
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
         get() = _state
     val token = MutableLiveData<String>()
-    //val actions: Flow<Action>
+    // val actions: Flow<Action>
 
     fun onSignButtonPressed() {
         if (token.value.isNullOrBlank()) {
@@ -22,6 +29,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         _state.value = State.Loading
+        // try{RouteToMain
+        //     KeyValueStorage.authToken}
+        // catch{ShowError(e.message)}
     }
 
     sealed interface State {
@@ -35,5 +45,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         object RouteToMain : Action
     }
 
-    // TODO:
+    private fun saveToken(token: String) {
+        val sharedPreferences = application.getSharedPreferences("token", MODE_PRIVATE)
+        sharedPreferences.edit().putString("token", token).apply()
+    }
 }
