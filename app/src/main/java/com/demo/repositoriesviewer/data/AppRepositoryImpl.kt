@@ -17,6 +17,8 @@ class AppRepositoryImpl(
     private val apiService = ApiFactory.apiService
     private val mapper = RepoMapper()
 
+    val keyValueStorage = KeyValueStorage()
+
     lateinit var userName: String
 
     override suspend fun getRepositories(): List<Repo> {
@@ -55,6 +57,7 @@ class AppRepositoryImpl(
         )
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
+        keyValueStorage.authToken = token
         return mapper.ownerDtoToUserInfo(ownerDto)
     }
 }

@@ -1,29 +1,16 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
-import com.demo.repositoriesviewer.data.AppRepositoryImpl
-import com.demo.repositoriesviewer.data.KeyValueStorage
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val repository by lazy {
-        AppRepositoryImpl(this)
-    }
-
-    private val authViewModel by lazy {
-        ViewModelProvider(this)[AuthViewModel::class.java]
-    }
-
-    private val token by lazy {
-        KeyValueStorage.authToken
-    }
+    private lateinit var authViewModel: AuthViewModel
 
     private var toastMessage: Toast? = null
 
@@ -31,9 +18,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
+        val etAuth = findViewById<EditText>(R.id.et_authorization)
+        val button = findViewById<Button>(R.id.bt_sign_in)
+
+        val token = authViewModel.getToken()
+        etAuth.setText(token)
+
         observeViewModel()
 
-        authViewModel.onSignButtonPressed()
+        button.setOnClickListener {
+            val newToken: String = etAuth.text.toString()
+            authViewModel.saveToken(newToken)
+            //authViewModel.onSignButtonPressed()
+        }
 
 //        lifecycleScope.launch {
 //            repository.signIn(token)
@@ -60,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         authViewModel.token.observe(this) {
-            authViewModel.
+            authViewModel.saveToken(it)
         }
     }
 
