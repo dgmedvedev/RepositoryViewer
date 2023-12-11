@@ -20,12 +20,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
-
-    val keyValueStorage = repository.keyValueStorage.authToken
-
-    init {
-        token.value = repository.keyValueStorage.authToken
-    }
+    val keyValueStorage = repository.keyValueStorage
 
     fun onSignButtonPressed() {
         if (token.value.isNullOrBlank()) {
@@ -37,8 +32,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
         _state.value = State.Loading
         // try{Action.RouteToMain}
-
-        saveToken(repository.keyValueStorage.authToken)
 
 //        repository.keyValueStorage.authToken?.let {
 //            viewModelScope.launch {
@@ -60,9 +53,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         object RouteToMain : Action
     }
 
-    fun saveToken(token: String?) {
-        repository.keyValueStorage.authToken = token
-        sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, token).apply()
+    fun saveToken(newToken: String?) {
+        token.value = newToken
+        keyValueStorage.authToken = newToken
+        sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
     }
 
     fun getToken(): String? {

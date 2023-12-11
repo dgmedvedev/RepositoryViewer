@@ -1,6 +1,7 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.bt_sign_in)
 
         val token = authViewModel.getToken()
+        Log.d("TEST_TOKEN", "token: $token")
         etAuth.setText(token)
 
         observeViewModel()
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             val newToken: String = etAuth.text.toString()
             authViewModel.saveToken(newToken)
-            //authViewModel.onSignButtonPressed()
+            authViewModel.onSignButtonPressed()
         }
 
 //        lifecycleScope.launch {
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         authViewModel.token.observe(this) {
-            authViewModel.saveToken(it)
+            //authViewModel.saveToken(it)
         }
     }
 
