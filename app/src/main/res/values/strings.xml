@@ -4,4 +4,6 @@
     <string name="id_not_found">Repository id = %s not found</string>
     <string name="value_not_entered">You did not enter a value</string>
     <string name="button_sign_in">Sign in</string>
+    <string name="logo">logo</string>
+    <string name="type_the_token">Type the token for authorization</string>
 </resources>

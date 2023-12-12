@@ -5,8 +5,11 @@ import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,6 +26,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val keyValueStorage = repository.keyValueStorage
 
     fun onSignButtonPressed() {
+        _state.value = State.Loading
         if (token.value.isNullOrBlank()) {
             _state.value = State.InvalidInput(
                 getApplication<Application>()
@@ -30,16 +34,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             )
             return
         }
-        _state.value = State.Loading
-        // try{Action.RouteToMain}
+        viewModelScope.launch {
+            delay(2000)
+            _state.value = State.Idle
 
+            // try{Action.RouteToMain}
 //        repository.keyValueStorage.authToken?.let {
 //            viewModelScope.launch {
 //                repository.signIn(it)
 //            }
 //        }
-
-        // catch{ShowError(e.message)}
+            // catch{ShowError(e.message)}
+        }
     }
 
     sealed interface State {
