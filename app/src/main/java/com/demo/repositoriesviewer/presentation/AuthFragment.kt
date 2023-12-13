@@ -21,6 +21,11 @@ class AuthFragment : Fragment() {
 
     private var toastMessage: Toast? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,7 +43,7 @@ class AuthFragment : Fragment() {
 
         observeViewModel()
 
-        binding.btSignIn.setOnClickListener {
+        binding.buttonSignIn.setOnClickListener {
             val newToken: String = binding.etAuthorization.text.toString()
             authViewModel.saveToken(newToken)
             authViewModel.onSignButtonPressed()
@@ -54,15 +59,20 @@ class AuthFragment : Fragment() {
 //        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun observeViewModel() {
         authViewModel.state.observe(viewLifecycleOwner) {
             binding.progressBar.visibility = View.GONE
-            binding.btSignIn.isEnabled = true
-            binding.btSignIn.setTextColor(resources.getColor(R.color.white))
+            binding.buttonSignIn.isEnabled = true
+            binding.buttonSignIn.setTextColor(resources.getColor(R.color.white))
             when (it) {
                 is AuthViewModel.State.Loading -> {
-                    binding.btSignIn.setTextColor(resources.getColor(R.color.button_auth))
-                    binding.btSignIn.isEnabled = false
+                    binding.buttonSignIn.setTextColor(resources.getColor(R.color.button_auth))
+                    binding.buttonSignIn.isEnabled = false
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is AuthViewModel.State.InvalidInput -> {
@@ -76,17 +86,6 @@ class AuthFragment : Fragment() {
         authViewModel.token.observe(viewLifecycleOwner) {
             //authViewModel.saveToken(it)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
     }
 
     private fun showToast(message: String) {

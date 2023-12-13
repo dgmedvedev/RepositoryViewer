@@ -8,6 +8,7 @@
     tools:context=".presentation.AuthFragment">
 
     <ImageView
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
@@ -16,36 +17,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@drawable/github_logo" />
 
     <EditText
         android:id="@+id/et_authorization"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:backgroundTint="@color/white"
-        android:gravity="center"
+        android:layout_margin="@dimen/app_margin"
+        android:backgroundTint="@color/gray_transparency"
+        android:gravity="start"
         android:hint="@string/type_the_token"
-        android:inputType="text"
-        android:minHeight="48dp"
+        android:inputType="textCapWords"
+        android:minHeight="65dp"
+        android:padding="15dp"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColorHint="@color/gray"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/logo" />
 
-    <Button
-        android:id="@+id/bt_sign_in"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <Button
+        android:id="@+id/button_sign_in"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/app_margin"
         android:backgroundTint="@color/button_auth"
         android:text="@string/button_sign_in"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_authorization"
         app:rippleColor="@null" />
 
     <ProgressBar
@@ -53,9 +62,9 @@
         android:layout_width="@dimen/progress_bar_size"
         android:layout_height="@dimen/progress_bar_size"
         android:indeterminateTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/bt_sign_in"
-        app:layout_constraintEnd_toEndOf="@+id/bt_sign_in"
-        app:layout_constraintStart_toStartOf="@+id/bt_sign_in"
-        app:layout_constraintTop_toTopOf="@+id/bt_sign_in" />
+        app:layout_constraintBottom_toBottomOf="@+id/button_sign_in"
+        app:layout_constraintEnd_toEndOf="@+id/button_sign_in"
+        app:layout_constraintStart_toStartOf="@+id/button_sign_in"
+        app:layout_constraintTop_toTopOf="@+id/button_sign_in" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
