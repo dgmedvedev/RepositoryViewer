@@ -66,7 +66,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getToken(): String? {
-        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "token.value")
+        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
     }
 
     companion object {

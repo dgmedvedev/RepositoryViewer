@@ -3,7 +3,9 @@ package com.demo.repositoriesviewer.presentation
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -38,12 +40,28 @@ class AuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val token = authViewModel.getToken()
-        Log.d("TEST_TOKEN", "token: $token")
         binding.etAuthorization.setText(token)
 
         observeViewModel()
 
+        binding.etAuthorization.isFocusableInTouchMode = false
+
+        binding.etAuthorization.setOnTouchListener(object : OnTouchListener {
+            override fun onTouch(p0: View?, event: MotionEvent?): Boolean {
+                var i = 0
+                Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener")
+                if (event?.getAction() == MotionEvent.ACTION_UP) {
+                    Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener: $i")
+                    binding.etAuthorization.isFocusableInTouchMode = true
+                }
+                Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener(): event = $event")
+                return false
+            }
+        })
+
+
         binding.buttonSignIn.setOnClickListener {
+            Log.d("TEST_TOKEN", "buttonSignIn.setOnClickListener: ${it.isActivated}")
             val newToken: String = binding.etAuthorization.text.toString()
             authViewModel.saveToken(newToken)
             authViewModel.onSignButtonPressed()
