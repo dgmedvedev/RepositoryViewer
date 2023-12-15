@@ -44,22 +44,6 @@ class AuthFragment : Fragment() {
 
         observeViewModel()
 
-        binding.etAuthorization.isFocusableInTouchMode = false
-
-        binding.etAuthorization.setOnTouchListener(object : OnTouchListener {
-            override fun onTouch(p0: View?, event: MotionEvent?): Boolean {
-                var i = 0
-                Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener")
-                if (event?.getAction() == MotionEvent.ACTION_UP) {
-                    Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener: $i")
-                    binding.etAuthorization.isFocusableInTouchMode = true
-                }
-                Log.d("TEST_TOKEN", "etAuthorization.setOnTouchListener(): event = $event")
-                return false
-            }
-        })
-
-
         binding.buttonSignIn.setOnClickListener {
             Log.d("TEST_TOKEN", "buttonSignIn.setOnClickListener: ${it.isActivated}")
             val newToken: String = binding.etAuthorization.text.toString()
