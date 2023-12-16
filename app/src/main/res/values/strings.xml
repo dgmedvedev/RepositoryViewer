@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Repositories Viewer</string>
     <string name="authorization_header"> token %s</string>
-    <string name="id_not_found">Repository id = %s not found</string>
-    <string name="value_not_entered">You did not enter a token</string>
     <string name="button_sign_in">Sign in</string>
+    <string name="id_not_found">Repository id = %s not found</string>
     <string name="logo">logo</string>
     <string name="type_the_token">Personal access token</string>
+    <string name="value_not_entered">You did not enter a token</string>
+    <string name="value_invalid">Invalid token value</string>
 </resources>

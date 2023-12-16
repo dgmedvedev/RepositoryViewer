@@ -11,6 +11,7 @@ import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -24,29 +25,43 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
-    val keyValueStorage = repository.keyValueStorage
 
     fun onSignButtonPressed() {
-        _state.value = State.Loading
-        if (token.value.isNullOrBlank()) {
-            _state.value = State.InvalidInput(
-                getApplication<Application>()
-                    .getString(R.string.value_not_entered)
-            )
-            return
-        }
-        viewModelScope.launch {
-            delay(2000)
-            _state.value = State.Idle
+        if(tokenIsValid(repository.keyValueStorage.authToken)){
+            _state.value = State.Loading
+            token.value = repository.keyValueStorage.authToken
 
-            // try{Action.RouteToMain}
+            viewModelScope.launch {
+                delay(2000)
+                _state.value = State.Idle
+
+                // try{Action.RouteToMain}
 //        repository.keyValueStorage.authToken?.let {
 //            viewModelScope.launch {
 //                repository.signIn(it)
 //            }
 //        }
-            // catch{ShowError(e.message)}
+                // catch{ShowError(e.message)}
+            }
         }
+    }
+
+    private fun tokenIsValid(newToken: String?): Boolean {
+        if (newToken.isNullOrBlank()) {
+            _state.value = State.InvalidInput(
+                getApplication<Application>()
+                    .getString(R.string.value_not_entered)
+            )
+            return false
+        }
+        if (Pattern.matches(".*\\p{InCyrillic}.*", newToken)) {
+            _state.value = State.InvalidInput(
+                getApplication<Application>()
+                    .getString(R.string.value_invalid)
+            )
+            return false
+        }
+        return true
     }
 
     override fun onCleared() {
@@ -66,8 +81,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveToken(newToken: String?) {
-        token.value = newToken
-        keyValueStorage.authToken = newToken
+        //token.value = newToken
+        repository.keyValueStorage.authToken = newToken
         sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
     }
 

@@ -45,7 +45,6 @@ class AuthFragment : Fragment() {
         observeViewModel()
 
         binding.buttonSignIn.setOnClickListener {
-            Log.d("TEST_TOKEN", "buttonSignIn.setOnClickListener: ${it.isActivated}")
             val newToken: String = binding.etAuthorization.text.toString()
             authViewModel.saveToken(newToken)
             authViewModel.onSignButtonPressed()
