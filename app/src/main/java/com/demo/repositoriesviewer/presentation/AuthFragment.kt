@@ -3,14 +3,10 @@ package com.demo.repositoriesviewer.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.demo.repositoriesviewer.R
@@ -46,7 +42,6 @@ class AuthFragment : Fragment() {
         binding.etAuthorization.setText(token)
 
         observeViewModel()
-
         setListeners()
 
 //        lifecycleScope.launch {
