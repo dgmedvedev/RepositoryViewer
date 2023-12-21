@@ -2,6 +2,7 @@ package com.demo.repositoriesviewer.presentation
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,21 +28,29 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
     fun onSignButtonPressed() {
-        if(tokenIsValid(repository.keyValueStorage.authToken)){
+        val enteredToken = repository.keyValueStorage.authToken ?: ""
+        if (tokenIsValid(enteredToken)) {
             _state.value = State.Loading
-            token.value = repository.keyValueStorage.authToken
 
             viewModelScope.launch {
-                delay(2000)
-                _state.value = State.Idle
-
                 // try{Action.RouteToMain}
-//        repository.keyValueStorage.authToken?.let {
-//            viewModelScope.launch {
-//                repository.signIn(it)
-//            }
-//        }
-                // catch{ShowError(e.message)}
+                try {
+                    val user = repository.signIn(enteredToken)
+                    token.value = enteredToken
+                    saveTokenInSharedPref(enteredToken)
+                    Log.d("TEST_TOKEN", user.name)
+
+//                    val listRepos = repository.getRepositories()
+//                    for ((i, repo) in listRepos.withIndex()) {
+//                        Log.d("TEST_TOKEN", "repo${i + 1}: $repo")
+//                    }
+
+                    delay(1000)
+                    _state.value = State.Idle
+                } catch (e: Exception) {
+                    // catch{Action.ShowError(e.message)}
+                    Log.d("TEST_TOKEN", "Exception onSignButtonPressed(): ${e.message}")
+                }
             }
         }
     }
@@ -83,6 +92,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun saveToken(newToken: String?) {
         //token.value = newToken
         repository.keyValueStorage.authToken = newToken
+    }
+
+    private fun saveTokenInSharedPref(newToken: String?) {
         sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
     }
 
