@@ -44,13 +44,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 //                    for ((i, repo) in listRepos.withIndex()) {
 //                        Log.d("TEST_TOKEN", "repo${i + 1}: $repo")
 //                    }
-
-                    delay(1000)
-                    _state.value = State.Idle
                 } catch (e: Exception) {
                     // catch{Action.ShowError(e.message)}
                     Log.d("TEST_TOKEN", "Exception onSignButtonPressed(): ${e.message}")
                 }
+                delay(1000)
+                _state.value = State.Idle
             }
         }
     }
