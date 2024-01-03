@@ -10,7 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
@@ -22,12 +25,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val state: LiveData<State>
         get() = _state
     val token = MutableLiveData<String>()
-    // val actions: Flow<Action>
+
+    private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
+    val actions: Flow<Action> = _actions.receiveAsFlow()
 
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
     fun onSignButtonPressed() {
+        viewModelScope.launch {
+            _actions.send(Action.RouteToMain)
+        }
+
         val enteredToken = repository.keyValueStorage.authToken ?: ""
         if (tokenIsValid(enteredToken)) {
             _state.value = State.Loading

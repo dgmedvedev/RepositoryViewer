@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentAuthBinding
+import kotlinx.coroutines.launch
 
 class AuthFragment : Fragment() {
 
@@ -60,6 +62,12 @@ class AuthFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        lifecycleScope.launch {
+            authViewModel.actions.collect {
+                handleAction(it)
+            }
+        }
+
         authViewModel.state.observe(viewLifecycleOwner) {
             binding.progressBar.visibility = View.GONE
             binding.buttonSignIn.isEnabled = true
@@ -98,6 +106,13 @@ class AuthFragment : Fragment() {
                     tilAuthorization.error = null
                 }
             })
+        }
+    }
+
+    private fun handleAction(action: AuthViewModel.Action) {
+        when (action) {
+            AuthViewModel.Action.RouteToMain -> showToast(action.javaClass.simpleName)
+            is AuthViewModel.Action.ShowError -> showToast(action.message)
         }
     }
 
