@@ -33,31 +33,30 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
     fun onSignButtonPressed() {
-        viewModelScope.launch {
-            _actions.send(Action.RouteToMain)
-        }
-
-        val enteredToken = repository.keyValueStorage.authToken ?: ""
+        val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
         if (tokenIsValid(enteredToken)) {
             _state.value = State.Loading
 
             viewModelScope.launch {
-                // try{Action.RouteToMain}
                 try {
                     val user = repository.signIn(enteredToken)
                     token.value = enteredToken
                     saveTokenInSharedPref(enteredToken)
                     Log.d("TEST_TOKEN", user.name)
+                    viewModelScope.launch {
+                        _actions.send(Action.RouteToMain)
+                    }
 
 //                    val listRepos = repository.getRepositories()
 //                    for ((i, repo) in listRepos.withIndex()) {
 //                        Log.d("TEST_TOKEN", "repo${i + 1}: $repo")
 //                    }
                 } catch (e: Exception) {
-                    // catch{Action.ShowError(e.message)}
-                    Log.d("TEST_TOKEN", "Exception onSignButtonPressed(): ${e.message}")
+                    viewModelScope.launch {
+                        _actions.send(Action.ShowError(e.message.toString()))
+                    }
                 }
-                delay(1000)
+                delay(500)
                 _state.value = State.Idle
             }
         }
@@ -97,8 +96,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         object RouteToMain : Action
     }
 
+    fun getToken(): String? {
+        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
+    }
+
     fun saveToken(newToken: String?) {
-        //token.value = newToken
         repository.keyValueStorage.authToken = newToken
     }
 
@@ -106,12 +108,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
     }
 
-    fun getToken(): String? {
-        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
-    }
-
     companion object {
         const val NAME_SHARED_PREFERENCE = "shared_preference"
         const val KEY_SHARED_PREFERENCE = "token_value"
+        const val TOKEN_IS_BLANK = ""
     }
 }

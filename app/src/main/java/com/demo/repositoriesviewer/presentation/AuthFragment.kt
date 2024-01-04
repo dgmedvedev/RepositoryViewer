@@ -46,15 +46,6 @@ class AuthFragment : Fragment() {
 
         observeViewModel()
         setListeners()
-
-//        lifecycleScope.launch {
-//            repository.signIn(token)
-//            val listRepos = repository.getRepositories()
-//
-//            for ((i, repo) in listRepos.withIndex()) {
-//                Log.d("TEST_RETROFIT", "repo${i + 1}: $repo")
-//            }
-//        }
     }
 
     override fun onDestroyView() {
@@ -86,11 +77,8 @@ class AuthFragment : Fragment() {
             } else {
                 null
             }
-
-            if (state is AuthViewModel.State.Idle) {
-                showToast("Idle")
-            }
         }
+
         authViewModel.token.observe(viewLifecycleOwner) {
             //authViewModel.saveToken(it)
         }
@@ -116,9 +104,13 @@ class AuthFragment : Fragment() {
 
     private fun handleAction(action: AuthViewModel.Action) {
         when (action) {
-            AuthViewModel.Action.RouteToMain -> showToast(action.javaClass.simpleName)
+            AuthViewModel.Action.RouteToMain -> routeSuccess()
             is AuthViewModel.Action.ShowError -> showToast(action.message)
         }
+    }
+
+    private fun routeSuccess() {
+        showToast("OK")
     }
 
     private fun showToast(message: String) {
