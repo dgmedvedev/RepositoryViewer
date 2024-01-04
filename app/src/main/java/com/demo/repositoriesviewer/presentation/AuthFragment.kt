@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -68,22 +69,26 @@ class AuthFragment : Fragment() {
             }
         }
 
-        authViewModel.state.observe(viewLifecycleOwner) {
-            binding.progressBar.visibility = View.GONE
-            binding.buttonSignIn.isEnabled = true
-            binding.buttonSignIn.setTextColor(resources.getColor(R.color.white))
-            when (it) {
-                is AuthViewModel.State.Loading -> {
-                    binding.buttonSignIn.setTextColor(resources.getColor(R.color.button_auth))
-                    binding.buttonSignIn.isEnabled = false
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                is AuthViewModel.State.InvalidInput -> {
-                    binding.tilAuthorization.error = it.reason
-                }
-                is AuthViewModel.State.Idle -> {
-                    showToast("Idle")
-                }
+        authViewModel.state.observe(viewLifecycleOwner) { state ->
+            val color = if (state is AuthViewModel.State.Loading) {
+                ContextCompat.getColor(requireContext(), R.color.button_auth)
+            } else {
+                ContextCompat.getColor(requireContext(), R.color.white)
+            }
+            binding.buttonSignIn.setTextColor(color)
+            binding.buttonSignIn.isEnabled = state != AuthViewModel.State.Loading
+
+            binding.progressBar.visibility =
+                if (state == AuthViewModel.State.Loading) View.VISIBLE else View.GONE
+
+            binding.tilAuthorization.error = if (state is AuthViewModel.State.InvalidInput) {
+                state.reason
+            } else {
+                null
+            }
+
+            if (state is AuthViewModel.State.Idle) {
+                showToast("Idle")
             }
         }
         authViewModel.token.observe(viewLifecycleOwner) {
