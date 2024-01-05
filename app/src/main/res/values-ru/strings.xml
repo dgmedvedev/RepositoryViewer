@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Repositories Viewer</string>
+    <string name="authorization_header"> token %s</string>
+    <string name="button_sign_in">Войти</string>
+    <string name="id_not_found">Репозиторий с id = %s не найден</string>
+    <string name="logo">logo</string>
+    <string name="type_the_token">Личный токен доступа</string>
+    <string name="value_not_entered">Введите свой личный токен доступа</string>
+    <string name="value_invalid">Недопустимый токен</string>
+
+    <string name="requires_authentication_error">Требуется аутентификация</string>
+    <string name="forbidden_error">Доступ запрещен</string>
+    <string name="resource_not_found_error">Ресурс не найден</string>
+    <string name="validation_failed_error">Проверка не удалась, или конечная точка подверглась спаму</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+</resources>

@@ -14,13 +14,15 @@ class AppRepositoryImpl(
     private val context: Context
 ) : AppRepository {
 
-    private val apiService = ApiFactory.apiService
-    private val mapper = RepoMapper()
+    val keyValueStorage = KeyValueStorage()
 
     lateinit var userName: String
 
+    private val apiService = ApiFactory.apiService
+    private val mapper = RepoMapper()
+
     override suspend fun getRepositories(): List<Repo> {
-        val fullListReposDto = apiService.getListRepos(userName)
+        val fullListReposDto = apiService.getListRepos(userName = userName)
         return mapper.mapListReposDtoToListRepos(fullListReposDto)
     }
 
@@ -55,6 +57,7 @@ class AppRepositoryImpl(
         )
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
+        keyValueStorage.authToken = token
         return mapper.ownerDtoToUserInfo(ownerDto)
     }
 }
