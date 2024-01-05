@@ -53,10 +53,17 @@ class AuthFragment : Fragment() {
         _binding = null
     }
 
+    private fun handleAction(action: AuthViewModel.Action) {
+        when (action) {
+            AuthViewModel.Action.RouteToMain -> routeSuccess()
+            is AuthViewModel.Action.ShowError -> showError(action.message)
+        }
+    }
+
     private fun observeViewModel() {
         lifecycleScope.launch {
-            authViewModel.actions.collect {
-                handleAction(it)
+            authViewModel.actions.collect { action ->
+                handleAction(action)
             }
         }
 
@@ -66,8 +73,8 @@ class AuthFragment : Fragment() {
             } else {
                 ContextCompat.getColor(requireContext(), R.color.white)
             }
-            binding.buttonSignIn.setTextColor(color)
-            binding.buttonSignIn.isEnabled = state != AuthViewModel.State.Loading
+            binding.signButton.setTextColor(color)
+            binding.signButton.isEnabled = state != AuthViewModel.State.Loading
 
             binding.progressBar.visibility =
                 if (state == AuthViewModel.State.Loading) View.VISIBLE else View.GONE
@@ -80,15 +87,19 @@ class AuthFragment : Fragment() {
         }
 
         authViewModel.token.observe(viewLifecycleOwner) {
-            //authViewModel.saveToken(it)
+            //TODO()
         }
+    }
+
+    private fun routeSuccess() {
+        showToast("RepositoriesListFragment")
     }
 
     private fun setListeners() {
         with(binding) {
-            buttonSignIn.setOnClickListener {
+            signButton.setOnClickListener {
                 val newToken: String = etAuthorization.text.toString()
-                authViewModel.saveToken(newToken)
+                authViewModel.repository.keyValueStorage.authToken = newToken
                 authViewModel.onSignButtonPressed()
             }
 
@@ -102,15 +113,15 @@ class AuthFragment : Fragment() {
         }
     }
 
-    private fun handleAction(action: AuthViewModel.Action) {
-        when (action) {
-            AuthViewModel.Action.RouteToMain -> routeSuccess()
-            is AuthViewModel.Action.ShowError -> showToast(action.message)
+    private fun showError(error: String) {
+        val message = when (error) {
+            HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
+            HTTP_403_ERROR -> getString(R.string.forbidden_error)
+            HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
+            HTTP_422_ERROR -> getString(R.string.validation_failed_error)
+            else -> getString(R.string.unknown_error)
         }
-    }
-
-    private fun routeSuccess() {
-        showToast("OK")
+        showToast("$message ($error)")
     }
 
     private fun showToast(message: String) {
@@ -119,5 +130,12 @@ class AuthFragment : Fragment() {
         }
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
+    }
+
+    companion object {
+        const val HTTP_401_ERROR = "HTTP 401 "
+        const val HTTP_403_ERROR = "HTTP 403 "
+        const val HTTP_404_ERROR = "HTTP 404 "
+        const val HTTP_422_ERROR = "HTTP 422 "
     }
 }

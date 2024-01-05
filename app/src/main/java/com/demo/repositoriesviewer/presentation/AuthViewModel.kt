@@ -2,7 +2,6 @@ package com.demo.repositoriesviewer.presentation
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,12 +18,12 @@ import java.util.regex.Pattern
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: AppRepositoryImpl = AppRepositoryImpl(application)
+    val repository: AppRepositoryImpl = AppRepositoryImpl(application)
 
+    val token = MutableLiveData<String>()
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
         get() = _state
-    val token = MutableLiveData<String>()
 
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
@@ -32,34 +31,36 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
+    }
+
+    fun getToken(): String? {
+        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
+    }
+
     fun onSignButtonPressed() {
         val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
         if (tokenIsValid(enteredToken)) {
             _state.value = State.Loading
-
             viewModelScope.launch {
                 try {
-                    val user = repository.signIn(enteredToken)
+                    repository.signIn(enteredToken)
                     token.value = enteredToken
-                    saveTokenInSharedPref(enteredToken)
-                    Log.d("TEST_TOKEN", user.name)
-                    viewModelScope.launch {
-                        _actions.send(Action.RouteToMain)
-                    }
-
-//                    val listRepos = repository.getRepositories()
-//                    for ((i, repo) in listRepos.withIndex()) {
-//                        Log.d("TEST_TOKEN", "repo${i + 1}: $repo")
-//                    }
-                } catch (e: Exception) {
-                    viewModelScope.launch {
-                        _actions.send(Action.ShowError(e.message.toString()))
-                    }
+                    saveToken(enteredToken)
+                    _actions.send(Action.RouteToMain)
+                } catch (e: RuntimeException) {
+                    _actions.send(Action.ShowError(e.message.toString()))
                 }
                 delay(500)
                 _state.value = State.Idle
             }
         }
+    }
+
+    private fun saveToken(newToken: String?) {
+        sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
     }
 
     private fun tokenIsValid(newToken: String?): Boolean {
@@ -80,9 +81,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return true
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
+    companion object {
+        const val NAME_SHARED_PREFERENCE = "shared_preference"
+        const val KEY_SHARED_PREFERENCE = "token_value"
+        const val TOKEN_IS_BLANK = ""
     }
 
     sealed interface State {
@@ -94,23 +96,5 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     sealed interface Action {
         data class ShowError(val message: String) : Action
         object RouteToMain : Action
-    }
-
-    fun getToken(): String? {
-        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
-    }
-
-    fun saveToken(newToken: String?) {
-        repository.keyValueStorage.authToken = newToken
-    }
-
-    private fun saveTokenInSharedPref(newToken: String?) {
-        sharedPreferences.edit().putString(KEY_SHARED_PREFERENCE, newToken).apply()
-    }
-
-    companion object {
-        const val NAME_SHARED_PREFERENCE = "shared_preference"
-        const val KEY_SHARED_PREFERENCE = "token_value"
-        const val TOKEN_IS_BLANK = ""
     }
 }

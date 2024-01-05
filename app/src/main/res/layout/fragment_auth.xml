@@ -51,7 +51,7 @@
         app:layout_constraintGuide_percent="0.6" />
 
     <Button
-        android:id="@+id/button_sign_in"
+        android:id="@+id/sign_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/app_margin"
@@ -68,9 +68,9 @@
         android:layout_width="@dimen/progress_bar_size"
         android:layout_height="@dimen/progress_bar_size"
         android:indeterminateTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/button_sign_in"
-        app:layout_constraintEnd_toEndOf="@+id/button_sign_in"
-        app:layout_constraintStart_toStartOf="@+id/button_sign_in"
-        app:layout_constraintTop_toTopOf="@+id/button_sign_in" />
+        app:layout_constraintBottom_toBottomOf="@+id/sign_button"
+        app:layout_constraintEnd_toEndOf="@+id/sign_button"
+        app:layout_constraintStart_toStartOf="@+id/sign_button"
+        app:layout_constraintTop_toTopOf="@+id/sign_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
