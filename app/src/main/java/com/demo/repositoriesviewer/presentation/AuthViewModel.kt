@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
+import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -19,6 +20,8 @@ import java.util.regex.Pattern
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     val repository: AppRepositoryImpl = AppRepositoryImpl(application)
+
+    private val signInUseCase = SignInUseCase(repository)
 
     val token = MutableLiveData<String>()
     private val _state = MutableLiveData<State>()
@@ -46,7 +49,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             _state.value = State.Loading
             viewModelScope.launch {
                 try {
-                    repository.signIn(enteredToken)
+                    signInUseCase(enteredToken)
                     token.value = enteredToken
                     saveToken(enteredToken)
                     _actions.send(Action.RouteToMain)

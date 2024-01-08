@@ -60,6 +60,14 @@ class AuthFragment : Fragment() {
         }
     }
 
+    private fun launchFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.popBackStack()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun observeViewModel() {
         lifecycleScope.launch {
             authViewModel.actions.collect { action ->
@@ -92,7 +100,7 @@ class AuthFragment : Fragment() {
     }
 
     private fun routeSuccess() {
-        showToast("RepositoriesListFragment")
+        launchFragment(RepositoriesListFragment.getInstance())
     }
 
     private fun setListeners() {

@@ -10,11 +10,9 @@ import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 
-class AppRepositoryImpl(
-    private val context: Context
-) : AppRepository {
+class AppRepositoryImpl(private val context: Context) : AppRepository {
 
-    val keyValueStorage = KeyValueStorage()
+    val keyValueStorage = KeyValueStorage
 
     lateinit var userName: String
 
