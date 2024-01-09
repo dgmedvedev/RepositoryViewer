@@ -1,9 +1,8 @@
 package com.demo.repositoriesviewer.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -11,10 +10,10 @@ import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
 import kotlinx.coroutines.launch
 
-class RepositoriesListViewModel(application: Application) :
-    AndroidViewModel(application) {
+class RepositoriesListViewModel :
+    ViewModel() {
 
-    val repository: AppRepositoryImpl = AppRepositoryImpl(application)
+    val repository: AppRepositoryImpl = AppRepositoryImpl
 
     private val signInUseCase = SignInUseCase(repository)
     private val getRepositoriesUseCase = GetRepositoriesUseCase(repository)
@@ -27,8 +26,8 @@ class RepositoriesListViewModel(application: Application) :
         viewModelScope.launch {
             var repoList: List<Repo> = mutableListOf()
             try {
-                val enteredToken = repository.keyValueStorage.authToken ?: ""
-                signInUseCase(enteredToken)
+//                val enteredToken = repository.keyValueStorage.authToken ?: ""
+//                signInUseCase(enteredToken)
 
                 _state.value = State.Loading
                 repoList = getRepositoriesUseCase()

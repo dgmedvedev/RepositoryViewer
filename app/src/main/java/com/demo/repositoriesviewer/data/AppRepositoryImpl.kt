@@ -1,8 +1,5 @@
 package com.demo.repositoriesviewer.data
 
-import android.content.Context
-import androidx.core.content.ContextCompat.getString
-import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -10,7 +7,7 @@ import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 
-class AppRepositoryImpl(private val context: Context) : AppRepository {
+object AppRepositoryImpl : AppRepository {
 
     val keyValueStorage = KeyValueStorage
 
@@ -33,10 +30,11 @@ class AppRepositoryImpl(private val context: Context) : AppRepository {
             }
         }
         return repoDetails ?: throw RuntimeException(
-            String.format(
-                getString(context, R.string.id_not_found),
-                repoId
-            )
+            "id_not_found"
+//            String.format(
+//                getString(context, R.string.id_not_found),
+//                repoId
+//            )
         )
     }
 
@@ -49,10 +47,11 @@ class AppRepositoryImpl(private val context: Context) : AppRepository {
     }
 
     override suspend fun signIn(token: String): UserInfo {
-        val authorizationHeader = String.format(
-            getString(context, R.string.authorization_header),
-            token
-        )
+        val authorizationHeader = " token $token"
+//        val authorizationHeader = String.format(
+//            getString(context, R.string.authorization_header),
+//            token
+//        )
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
         keyValueStorage.authToken = token

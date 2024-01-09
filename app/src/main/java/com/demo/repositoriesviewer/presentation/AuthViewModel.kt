@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    val repository: AppRepositoryImpl = AppRepositoryImpl(application)
+    val repository: AppRepositoryImpl = AppRepositoryImpl
 
     private val signInUseCase = SignInUseCase(repository)
 
