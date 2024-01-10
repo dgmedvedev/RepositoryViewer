@@ -1,13 +1,12 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -110,14 +109,9 @@ class AuthFragment : Fragment() {
                 authViewModel.repository.keyValueStorage.authToken = newToken
                 authViewModel.onSignButtonPressed()
             }
-
-            etAuthorization.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(p0: Editable?) {}
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    tilAuthorization.error = null
-                }
-            })
+            etAuthorization.addTextChangedListener {
+                tilAuthorization.error = null
+            }
         }
     }
 

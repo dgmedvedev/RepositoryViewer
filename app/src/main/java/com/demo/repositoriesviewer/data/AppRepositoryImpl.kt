@@ -9,7 +9,7 @@ import com.demo.repositoriesviewer.domain.repository.AppRepository
 
 object AppRepositoryImpl : AppRepository {
 
-    val keyValueStorage = KeyValueStorage
+    val keyValueStorage = KeyValueStorage()
 
     lateinit var userName: String
 
@@ -29,13 +29,7 @@ object AppRepositoryImpl : AppRepository {
                 repoDetails = repo.repoDetails
             }
         }
-        return repoDetails ?: throw RuntimeException(
-            "id_not_found"
-//            String.format(
-//                getString(context, R.string.id_not_found),
-//                repoId
-//            )
-        )
+        return repoDetails ?: throw RuntimeException("Repository id = $repoId not found")
     }
 
     override suspend fun getRepositoryReadme(
@@ -48,10 +42,6 @@ object AppRepositoryImpl : AppRepository {
 
     override suspend fun signIn(token: String): UserInfo {
         val authorizationHeader = " token $token"
-//        val authorizationHeader = String.format(
-//            getString(context, R.string.authorization_header),
-//            token
-//        )
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
         keyValueStorage.authToken = token

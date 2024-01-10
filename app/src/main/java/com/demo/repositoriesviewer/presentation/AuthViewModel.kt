@@ -50,13 +50,13 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope.launch {
                 try {
                     signInUseCase(enteredToken)
+                    delay(500)
                     token.value = enteredToken
                     saveToken(enteredToken)
                     _actions.send(Action.RouteToMain)
                 } catch (e: RuntimeException) {
                     _actions.send(Action.ShowError(e.message.toString()))
                 }
-                delay(500)
                 _state.value = State.Idle
             }
         }
