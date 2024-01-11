@@ -5,6 +5,8 @@ data class RepoDetails(
     val stars: Int,
     val watchers: Int,
     val branchName: String,
+    val description: String?,
+    val language: String,
     val name: String,
     val url: String,
     val license: License? = null,

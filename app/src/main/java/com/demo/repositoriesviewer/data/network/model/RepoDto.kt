@@ -24,6 +24,14 @@ data class RepoDto(
     @Expose
     val branchName: String,
 
+    @SerializedName("description")
+    @Expose
+    val description: String?,
+
+    @SerializedName("language")
+    @Expose
+    val language: String,
+
     @SerializedName("name")
     @Expose
     val name: String,
@@ -31,10 +39,6 @@ data class RepoDto(
     @SerializedName("html_url")
     @Expose
     val url: String,
-
-    @SerializedName("description")
-    @Expose
-    val description: String?,
 
     @SerializedName("license")
     @Expose

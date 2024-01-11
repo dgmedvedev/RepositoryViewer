@@ -27,8 +27,8 @@ class RepoListAdapter :
 
         binding.apply {
             tvRepoName.text = repoItem.repoDetails.name
-            tvProgrammingLanguage.text = repoItem.repoDetails.name
-            tvRepoDescription.text = repoItem.repoDetails.branchName
+            tvLanguage.text = repoItem.repoDetails.language
+            tvDescription.text = repoItem.repoDetails.description
 
             root.setOnClickListener {
                 onRepoClickListener?.invoke(repoItem)

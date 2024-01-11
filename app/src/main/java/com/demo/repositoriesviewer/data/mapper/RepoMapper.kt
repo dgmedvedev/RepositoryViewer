@@ -27,6 +27,8 @@ class RepoMapper {
         stars = repoDto.stargazersCount,
         watchers = repoDto.watchersCount,
         branchName = repoDto.branchName,
+        description = repoDto.description,
+        language = repoDto.language,
         name = repoDto.name,
         url = repoDto.url,
         license = licenseDtoToLicense(repoDto),
