@@ -6,7 +6,7 @@ data class RepoDetails(
     val watchers: Int,
     val branchName: String,
     val description: String?,
-    val language: String,
+    val language: String?,
     val name: String,
     val url: String,
     val license: License? = null,

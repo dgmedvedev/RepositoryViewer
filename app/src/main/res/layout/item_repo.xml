@@ -8,12 +8,15 @@
 
     <TextView
         android:id="@+id/tv_repo_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="start"
         android:textColor="@color/blue"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_language"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="kmm.dev" />
@@ -25,9 +28,9 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:textColor="@color/purple"
-        android:textSize="20sp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_repo_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:text="Kotlin" />
 
     <TextView
@@ -38,15 +41,15 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_repo_name"
         tools:text="Repository description" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
         android:background="@color/gray_transparency"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_description" />

@@ -30,7 +30,7 @@ data class RepoDto(
 
     @SerializedName("language")
     @Expose
-    val language: String,
+    val language: String?,
 
     @SerializedName("name")
     @Expose

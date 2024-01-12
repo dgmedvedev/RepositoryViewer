@@ -23,7 +23,7 @@ class RepositoriesListFragment : Fragment() {
     private var toastMessage: Toast? = null
 
     private val repoListAdapter by lazy {
-        RepoListAdapter()
+        RepoListAdapter(requireContext())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

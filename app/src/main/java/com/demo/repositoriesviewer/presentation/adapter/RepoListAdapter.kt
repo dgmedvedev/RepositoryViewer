@@ -1,13 +1,16 @@
 package com.demo.repositoriesviewer.presentation.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.ItemRepoBinding
 import com.demo.repositoriesviewer.domain.entities.Repo
 
-class RepoListAdapter :
+class RepoListAdapter(private val context: Context) :
     ListAdapter<Repo, RepoListAdapter.RepoListViewHolder>(RepoDiffCallback()) {
 
     var onRepoClickListener: ((Repo) -> Unit)? = null
@@ -24,16 +27,29 @@ class RepoListAdapter :
     override fun onBindViewHolder(holder: RepoListViewHolder, position: Int) {
         val repoItem = getItem(position)
         val binding = holder.binding
+        val language = repoItem.repoDetails.language
+        val color = when (language) {
+            JAVA, JAVA_SCRIPT -> ContextCompat.getColor(context, R.color.yellow)
+            SWIFT -> ContextCompat.getColor(context, R.color.green)
+            else -> ContextCompat.getColor(context, R.color.purple)
+        }
 
         binding.apply {
             tvRepoName.text = repoItem.repoDetails.name
-            tvLanguage.text = repoItem.repoDetails.language
             tvDescription.text = repoItem.repoDetails.description
+            tvLanguage.text = language
+            tvLanguage.setTextColor(color)
 
             root.setOnClickListener {
                 onRepoClickListener?.invoke(repoItem)
             }
         }
+    }
+
+    companion object {
+        private const val JAVA = "Java"
+        private const val JAVA_SCRIPT = "JavaScript"
+        private const val SWIFT = "Swift"
     }
 
     class RepoListViewHolder(val binding: ItemRepoBinding) :
