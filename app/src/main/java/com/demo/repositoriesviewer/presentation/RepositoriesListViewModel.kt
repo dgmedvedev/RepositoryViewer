@@ -27,11 +27,11 @@ class RepositoriesListViewModel :
                 _state.value = State.Loading
                 repoList = getRepositoriesUseCase()
                 _state.value = State.Loaded(repoList)
+                if (repoList.isEmpty()) {
+                    _state.value = State.Empty
+                }
             } catch (error: Throwable) {
                 showError(error)
-            }
-            if (repoList.isEmpty()) {
-                _state.value = State.Empty
             }
         }
     }
