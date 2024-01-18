@@ -9,8 +9,7 @@ import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
 import kotlinx.coroutines.launch
 
-class RepositoriesListViewModel :
-    ViewModel() {
+class RepositoriesListViewModel : ViewModel() {
 
     val repository: AppRepositoryImpl = AppRepositoryImpl
 
