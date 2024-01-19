@@ -21,7 +21,7 @@ class RepositoriesListViewModel : ViewModel() {
 
     fun loadData() {
         viewModelScope.launch {
-            var repoList: List<Repo> = mutableListOf()
+            val repoList: List<Repo>
             try {
                 _state.value = State.Loading
                 repoList = getRepositoriesUseCase()

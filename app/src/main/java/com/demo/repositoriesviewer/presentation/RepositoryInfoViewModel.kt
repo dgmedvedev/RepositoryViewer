@@ -7,7 +7,7 @@ import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
 
-class RepositoriesInfoViewModel : ViewModel() {
+class RepositoryInfoViewModel : ViewModel() {
 
     val repository: AppRepositoryImpl = AppRepositoryImpl
 
