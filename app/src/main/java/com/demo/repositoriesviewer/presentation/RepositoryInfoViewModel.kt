@@ -22,6 +22,10 @@ class RepositoryInfoViewModel : ViewModel() {
     val state: LiveData<State>
         get() = _state
 
+    private val _readmeState = MutableLiveData<ReadmeState>()
+    val readmeState: LiveData<ReadmeState>
+        get() = _readmeState
+
     fun loadData(repoId: String) {
         viewModelScope.launch {
             val readme: String
@@ -29,6 +33,8 @@ class RepositoryInfoViewModel : ViewModel() {
             val repositoryDetails: RepoDetails
             try {
                 _state.value = State.Loading
+                _readmeState.value = ReadmeState.Loading
+
                 repositoryDetails = getRepositoryUseCase(repoId)
                 repo = Repo(repoId, repositoryDetails)
                 _state.value = State.Loaded(repo, ReadmeState.Loading)
@@ -38,13 +44,12 @@ class RepositoryInfoViewModel : ViewModel() {
 
                 if (!ownerName.isNullOrBlank()) {
                     readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
-                    _state.value = State.Loaded(repo, ReadmeState.Loaded(readme))
+                    _readmeState.value = ReadmeState.Loaded(readme)
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
-                        _state.value = State.Loaded(repo, ReadmeState.Empty)
+                        _readmeState.value = ReadmeState.Empty
                     }
                 } else {
-                    _state.value =
-                        State.Loaded(repo, ReadmeState.Error("ownerName.isNullOrBlank()"))
+                    _readmeState.value = ReadmeState.Error("ownerName.isNullOrBlank()")
                 }
             } catch (error: Throwable) {
                 showError(error)

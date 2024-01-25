@@ -53,7 +53,12 @@ class DetailInfoFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        repositoryInfoViewModel.state.observe(viewLifecycleOwner){
 
+        }
+        repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner){
+
+        }
     }
 
     private fun setListeners() {
