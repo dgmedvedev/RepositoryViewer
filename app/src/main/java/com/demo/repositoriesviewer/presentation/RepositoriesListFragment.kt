@@ -54,6 +54,13 @@ class RepositoriesListFragment : Fragment() {
         _binding = null
     }
 
+    private fun launchFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun observeViewModel() {
         repositoriesListViewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility =
@@ -73,7 +80,7 @@ class RepositoriesListFragment : Fragment() {
 
     private fun setListeners() {
         repoListAdapter.onRepoClickListener = {
-            showToast(it.id)
+            launchFragment(DetailInfoFragment.getInstance(it.id))
         }
     }
 

@@ -23,7 +23,7 @@ class DetailInfoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        repositoryInfoViewModel = ViewModelProvider(this)[repositoryInfoViewModel::class.java]
+        repositoryInfoViewModel = ViewModelProvider(this)[RepositoryInfoViewModel::class.java]
         parseParams()
     }
 
@@ -41,6 +41,9 @@ class DetailInfoFragment : Fragment() {
 
         observeViewModel()
         setListeners()
+        repoId?.let {
+            repositoryInfoViewModel.loadData(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -53,10 +56,12 @@ class DetailInfoFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        repositoryInfoViewModel.state.observe(viewLifecycleOwner){
-
+        repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
+            if (state is RepositoryInfoViewModel.State.Loaded) {
+                binding.tvRepoUrl.text = state.githubRepo.repoDetails.url
+            }
         }
-        repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner){
+        repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) {
 
         }
     }
