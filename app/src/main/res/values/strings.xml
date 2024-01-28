@@ -1,23 +1,25 @@
 <resources>
     <string name="app_name">Repositories Viewer</string>
     <string name="button_sign_in">Sign in</string>
+    <string name="forks">forks</string>
+    <string name="number_of_forks">Number of forks</string>
     <string name="number_of_stars">Number of stars</string>
+    <string name="number_of_watchers">Number of watchers</string>
+    <string name="license">License</string>
     <string name="list_is_empty">The list of repositories is empty</string>
     <string name="logo">logo</string>
+    <string name="stars">stars</string>
     <string name="type_the_token">Personal access token</string>
     <string name="value_not_entered">Enter your personal access token</string>
     <string name="value_invalid">Invalid token</string>
     <string name="url_link">URL link</string>
+    <string name="watchers">watchers</string>
+    <string name="without_a_license">without a license</string>
+    <string name="zero">0</string>
 
     <string name="requires_authentication_error">Requires authentication</string>
     <string name="forbidden_error">Forbidden</string>
     <string name="resource_not_found_error">Resource not found</string>
     <string name="validation_failed_error">Validation failed, or the endpoint has been spammed</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="license">License</string>
-    <string name="stars">stars</string>
-    <string name="number_of_forks">Number of forks</string>
-    <string name="forks">forks</string>
-    <string name="number_of_watchers">Number of watchers</string>
-    <string name="watchers">watchers</string>
 </resources>

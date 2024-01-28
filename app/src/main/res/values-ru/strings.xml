@@ -1,23 +1,25 @@
 <resources>
     <string name="app_name">Repositories Viewer</string>
     <string name="button_sign_in">Войти</string>
+    <string name="forks">forks</string>
+    <string name="number_of_forks">Number of forks</string>
     <string name="number_of_stars">Количество звезд</string>
+    <string name="number_of_watchers">Number of watchers</string>
+    <string name="license">License</string>
     <string name="list_is_empty">Список репозиториев пуст</string>
     <string name="logo">logo</string>
+    <string name="stars">stars</string>
     <string name="type_the_token">Личный токен доступа</string>
     <string name="value_not_entered">Введите свой личный токен доступа</string>
     <string name="value_invalid">Недопустимый токен</string>
     <string name="url_link">URL-ссылка</string>
+    <string name="watchers">watchers</string>
+    <string name="without_a_license">без лицензии</string>
+    <string name="zero">0</string>
 
     <string name="requires_authentication_error">Требуется аутентификация</string>
     <string name="forbidden_error">Доступ запрещен</string>
     <string name="resource_not_found_error">Ресурс не найден</string>
     <string name="validation_failed_error">Проверка не удалась, или конечная точка подверглась спаму</string>
     <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="license">License</string>
-    <string name="stars">stars</string>
-    <string name="number_of_forks">Number of forks</string>
-    <string name="forks">forks</string>
-    <string name="number_of_watchers">Number of watchers</string>
-    <string name="watchers">watchers</string>
 </resources>

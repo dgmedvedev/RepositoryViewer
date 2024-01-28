@@ -59,6 +59,12 @@ class DetailInfoFragment : Fragment() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
                 binding.tvRepoUrl.text = state.githubRepo.repoDetails.url
+                binding.tvLicense.text =
+                    state.githubRepo.repoDetails.license?.spdxId
+                        ?: getString(R.string.without_a_license)
+                binding.tvStars.text = state.githubRepo.repoDetails.stars.toString()
+                binding.tvForks.text = state.githubRepo.repoDetails.forks.toString()
+                binding.tvWatchers.text = state.githubRepo.repoDetails.watchers.toString()
             }
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) {
