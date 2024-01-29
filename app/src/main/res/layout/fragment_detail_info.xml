@@ -172,4 +172,16 @@
         app:layout_constraintStart_toEndOf="@+id/tv_watchers"
         app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
+    <TextView
+        android:id="@+id/tv_readme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_watchers"
+        tools:text = "README file"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,8 +67,10 @@ class DetailInfoFragment : Fragment() {
                 binding.tvWatchers.text = state.githubRepo.repoDetails.watchers.toString()
             }
         }
-        repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) {
-
+        repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
+            if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
+                binding.tvReadme.text = readmeState.markdown
+            }
         }
     }
 

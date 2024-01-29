@@ -37,7 +37,7 @@ object AppRepositoryImpl : AppRepository {
         repositoryName: String,
         branchName: String
     ): String {
-        return "$ownerName+\n+$repositoryName+\n+$branchName"
+        return apiService.getReadme(ownerName, repositoryName, branchName)
     }
 
     override suspend fun signIn(token: String): UserInfo {

@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,6 +45,7 @@ class RepositoryInfoViewModel : ViewModel() {
 
                 if (!ownerName.isNullOrBlank()) {
                     readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
+                    Log.d("TEST_TOKEN", readme)
                     _readmeState.value = ReadmeState.Loaded(readme)
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                         _readmeState.value = ReadmeState.Empty

@@ -20,9 +20,19 @@ interface ApiService {
         @Header(HEADER_PARAM_AUTHORIZATION) authorization: String?
     ): OwnerDto
 
+    @GET("repos/{owner}/{repo}/readme")
+    suspend fun getReadme(
+        @Path(PATH_PARAM_OWNER) ownerName: String,
+        @Path(PATH_PARAM_REPO) repositoryName: String,
+        @Query(QUERY_PARAM_REF) branchName: String
+    ): String
+
     companion object {
         private const val HEADER_PARAM_AUTHORIZATION = "Authorization"
         private const val QUERY_PARAM_PER_PAGE = "per_page"
+        private const val QUERY_PARAM_REF = "ref"
         private const val PATH_PARAM_USERNAME = "username"
+        private const val PATH_PARAM_OWNER = "owner"
+        private const val PATH_PARAM_REPO = "repo"
     }
 }
