@@ -1,6 +1,5 @@
 package com.demo.repositoriesviewer.presentation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,14 +43,17 @@ class RepositoryInfoViewModel : ViewModel() {
                 val branchName = repo.repoDetails.branchName
 
                 if (!ownerName.isNullOrBlank()) {
-                    readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
-                    Log.d("TEST_TOKEN", readme)
-                    _readmeState.value = ReadmeState.Loaded(readme)
+                    try {
+                        readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
+                        _readmeState.value = ReadmeState.Loaded(readme)
+                    } catch (e: RuntimeException) {
+                        _readmeState.value = ReadmeState.Empty
+                    }
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                         _readmeState.value = ReadmeState.Empty
                     }
                 } else {
-                    _readmeState.value = ReadmeState.Error("ownerName.isNullOrBlank()")
+                    _readmeState.value = ReadmeState.Error("ownerName is null or blank")
                 }
             } catch (error: Throwable) {
                 showError(error)

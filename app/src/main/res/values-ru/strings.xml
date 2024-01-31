@@ -8,6 +8,7 @@
     <string name="license">License</string>
     <string name="list_is_empty">Список репозиториев пуст</string>
     <string name="logo">logo</string>
+    <string name="readme_empty">Readme.md пуст</string>
     <string name="stars">stars</string>
     <string name="type_the_token">Личный токен доступа</string>
     <string name="value_not_entered">Введите свой личный токен доступа</string>

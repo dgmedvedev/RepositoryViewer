@@ -66,10 +66,16 @@ class DetailInfoFragment : Fragment() {
                 binding.tvForks.text = state.githubRepo.repoDetails.forks.toString()
                 binding.tvWatchers.text = state.githubRepo.repoDetails.watchers.toString()
             }
+            if (state is RepositoryInfoViewModel.State.Error) {
+                showError(state.error)
+            }
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
                 binding.tvReadme.text = readmeState.markdown
+            }
+            if (readmeState is RepositoryInfoViewModel.ReadmeState.Empty) {
+                binding.tvReadme.text = getString(R.string.readme_empty)
             }
         }
     }

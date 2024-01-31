@@ -2,6 +2,7 @@ package com.demo.repositoriesviewer.data.network
 
 import com.demo.repositoriesviewer.data.network.model.OwnerDto
 import com.demo.repositoriesviewer.data.network.model.RepoDto
+import com.google.gson.JsonObject
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -25,7 +26,7 @@ interface ApiService {
         @Path(PATH_PARAM_OWNER) ownerName: String,
         @Path(PATH_PARAM_REPO) repositoryName: String,
         @Query(QUERY_PARAM_REF) branchName: String
-    ): String
+    ): JsonObject
 
     companion object {
         private const val HEADER_PARAM_AUTHORIZATION = "Authorization"

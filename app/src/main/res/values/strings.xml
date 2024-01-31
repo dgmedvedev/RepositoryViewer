@@ -8,6 +8,7 @@
     <string name="license">License</string>
     <string name="list_is_empty">The list of repositories is empty</string>
     <string name="logo">logo</string>
+    <string name="readme_empty">The Readme.md file is empty</string>
     <string name="stars">stars</string>
     <string name="type_the_token">Personal access token</string>
     <string name="value_not_entered">Enter your personal access token</string>
