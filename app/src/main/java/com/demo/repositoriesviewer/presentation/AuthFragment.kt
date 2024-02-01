@@ -76,7 +76,7 @@ class AuthFragment : Fragment() {
 
         authViewModel.state.observe(viewLifecycleOwner) { state ->
             val color = if (state is AuthViewModel.State.Loading) {
-                ContextCompat.getColor(requireContext(), R.color.button_auth)
+                ContextCompat.getColor(requireContext(), R.color.green_button_auth)
             } else {
                 ContextCompat.getColor(requireContext(), R.color.white)
             }

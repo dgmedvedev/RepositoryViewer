@@ -9,8 +9,7 @@ import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
 import kotlinx.coroutines.launch
 
-class RepositoriesListViewModel :
-    ViewModel() {
+class RepositoriesListViewModel : ViewModel() {
 
     val repository: AppRepositoryImpl = AppRepositoryImpl
 
@@ -22,7 +21,7 @@ class RepositoriesListViewModel :
 
     fun loadData() {
         viewModelScope.launch {
-            var repoList: List<Repo> = mutableListOf()
+            val repoList: List<Repo>
             try {
                 _state.value = State.Loading
                 repoList = getRepositoriesUseCase()
