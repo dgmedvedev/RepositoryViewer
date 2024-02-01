@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,180 +9,185 @@
     android:paddingStart="15dp"
     android:paddingTop="30dp"
     android:paddingEnd="15dp"
+    android:paddingBottom="15dp"
     tools:context=".presentation.AuthFragment">
 
-    <ImageView
-        android:id="@+id/iv_label_link"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/url_link"
-        android:src="@drawable/baseline_link_24"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_repo_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/blue"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_label_link"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="github.com" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/inner_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_label_license"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/url_link"
-        android:src="@drawable/baseline_license_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_repo_url" />
+            <TextView
+                android:id="@+id/tv_repo_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:textColor="@color/blue"
+                android:textSize="18sp"
+                app:drawableLeftCompat="@drawable/baseline_link_24"
+                app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
+                app:layout_constraintTop_toTopOf="@id/inner_constraint_layout"
+                tools:text="github.com/username/repo" />
 
-    <TextView
-        android:id="@+id/tv_title_license"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/license"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_label_license"
-        app:layout_constraintTop_toBottomOf="@id/tv_repo_url" />
+            <ImageView
+                android:id="@+id/iv_license_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:contentDescription="@string/license_label"
+                android:src="@drawable/baseline_license_24"
+                app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
+                app:layout_constraintTop_toBottomOf="@id/tv_repo_url" />
 
-    <TextView
-        android:id="@+id/tv_license"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="30dp"
-        android:gravity="end"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_repo_url"
-        tools:text="Apache-2.0" />
+            <TextView
+                android:id="@+id/tv_title_license"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/license"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_license_label"
+                app:layout_constraintTop_toBottomOf="@id/tv_repo_url" />
 
-    <ImageView
-        android:id="@+id/iv_label_stars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/number_of_stars"
-        android:src="@drawable/baseline_star_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_license"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:gravity="end"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@id/inner_constraint_layout"
+                app:layout_constraintTop_toBottomOf="@id/tv_repo_url"
+                tools:text="Apache-2.0" />
 
-    <TextView
-        android:id="@+id/tv_stars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/zero"
-        android:textColor="@color/yellow_star"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_label_stars"
-        app:layout_constraintTop_toBottomOf="@id/tv_license"
-        tools:text="259" />
+            <ImageView
+                android:id="@+id/iv_label_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:contentDescription="@string/number_of_stars"
+                android:src="@drawable/baseline_star_24"
+                app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
-    <TextView
-        android:id="@+id/tv_title_stars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/stars"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_stars"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/zero"
+                android:textColor="@color/yellow_star"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_label_stars"
+                app:layout_constraintTop_toBottomOf="@id/tv_license"
+                tools:text="259" />
 
-    <ImageView
-        android:id="@+id/iv_label_forks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/number_of_forks"
-        android:src="@drawable/baseline_forks_24"
-        app:layout_constraintStart_toEndOf="@id/tv_title_stars"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_title_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/stars"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/tv_stars"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
-    <TextView
-        android:id="@+id/tv_forks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/zero"
-        android:textColor="@color/green_forks_label"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_label_forks"
-        app:layout_constraintTop_toBottomOf="@id/tv_license"
-        tools:text="30" />
+            <ImageView
+                android:id="@+id/iv_label_forks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="30dp"
+                android:contentDescription="@string/number_of_forks"
+                android:src="@drawable/baseline_forks_24"
+                app:layout_constraintStart_toEndOf="@id/tv_title_stars"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
-    <TextView
-        android:id="@+id/tv_title_forks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/forks"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_forks"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_forks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/zero"
+                android:textColor="@color/green_forks_label"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_label_forks"
+                app:layout_constraintTop_toBottomOf="@id/tv_license"
+                tools:text="30" />
 
-    <ImageView
-        android:id="@+id/iv_label_watchers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/number_of_watchers"
-        android:src="@drawable/baseline_watchers_24"
-        app:layout_constraintStart_toEndOf="@id/tv_title_forks"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_title_forks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/forks"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/tv_forks"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
-    <TextView
-        android:id="@+id/tv_watchers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/zero"
-        android:textColor="@color/teal_watchers_label"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/iv_label_watchers"
-        app:layout_constraintTop_toBottomOf="@id/tv_license"
-        tools:text="10" />
+            <ImageView
+                android:id="@+id/iv_label_watchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="30dp"
+                android:contentDescription="@string/number_of_watchers"
+                android:src="@drawable/baseline_watchers_24"
+                app:layout_constraintStart_toEndOf="@id/tv_title_forks"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
-    <TextView
-        android:id="@+id/tv_title_watchers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/watchers"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_watchers"
-        app:layout_constraintTop_toBottomOf="@id/tv_license" />
+            <TextView
+                android:id="@+id/tv_watchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/zero"
+                android:textColor="@color/teal_watchers_label"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/iv_label_watchers"
+                app:layout_constraintTop_toBottomOf="@id/tv_license"
+                tools:text="10" />
 
-    <TextView
-        android:id="@+id/tv_readme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="30dp"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_watchers"
-        tools:text = "README file"/>
+            <TextView
+                android:id="@+id/tv_title_watchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/watchers"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/tv_watchers"
+                app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
+            <TextView
+                android:id="@+id/tv_readme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_watchers"
+                tools:text="README file" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

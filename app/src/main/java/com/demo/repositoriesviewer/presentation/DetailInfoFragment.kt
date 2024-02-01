@@ -1,5 +1,7 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -80,8 +82,16 @@ class DetailInfoFragment : Fragment() {
         }
     }
 
-    private fun setListeners() {
+    private fun openUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
+    }
 
+    private fun setListeners() {
+        binding.tvRepoUrl.setOnClickListener {
+            val url = binding.tvRepoUrl.text.toString()
+            openUrl(url)
+        }
     }
 
     private fun showError(error: String) {
