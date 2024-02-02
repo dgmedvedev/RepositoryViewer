@@ -2,6 +2,7 @@ package com.demo.repositoriesviewer.data.network
 
 import com.demo.repositoriesviewer.data.network.model.OwnerDto
 import com.demo.repositoriesviewer.data.network.model.RepoDto
+import com.demo.repositoriesviewer.data.network.model.Watcher
 import com.google.gson.JsonObject
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,8 +14,14 @@ interface ApiService {
     @GET("users/{username}/repos")
     suspend fun getListRepos(
         @Path(PATH_PARAM_USERNAME) userName: String?,
-        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
+        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 100
     ): List<RepoDto>
+
+    @GET("repos/{owner}/{repo}/subscribers")
+    suspend fun getListWatchers(
+        @Path(PATH_PARAM_OWNER) ownerName: String,
+        @Path(PATH_PARAM_REPO) repositoryName: String
+    ): List<Watcher>
 
     @GET("user")
     suspend fun getOwnerDto(
