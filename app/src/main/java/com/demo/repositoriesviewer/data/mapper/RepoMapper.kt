@@ -17,15 +17,13 @@ class RepoMapper {
         name = ownerDto.login
     )
 
-    private fun repoDtoToRepo(repoDto: RepoDto) = Repo(
-        id = repoDto.id,
-        repoDetails = repoDetailsDtoToRepoDetails(repoDto)
+    private fun licenseDtoToLicense(repoDto: RepoDto) = License(
+        spdxId = repoDto.license?.spdxId
     )
 
     private fun repoDetailsDtoToRepoDetails(repoDto: RepoDto) = RepoDetails(
         forks = repoDto.forksCount,
         stars = repoDto.stargazersCount,
-        watchers = repoDto.watchersCount,
         branchName = repoDto.branchName,
         description = repoDto.description,
         language = repoDto.language,
@@ -35,7 +33,8 @@ class RepoMapper {
         userInfo = ownerDtoToUserInfo(repoDto.owner)
     )
 
-    private fun licenseDtoToLicense(repoDto: RepoDto) = License(
-        spdxId = repoDto.license?.spdxId
+    private fun repoDtoToRepo(repoDto: RepoDto) = Repo(
+        id = repoDto.id,
+        repoDetails = repoDetailsDtoToRepoDetails(repoDto)
     )
 }

@@ -10,10 +10,10 @@
     <color name="black">#FF000000</color>
     <color name="blue">#5CA7FB</color>
     <color name="gray">#86888b</color>
-    <color name="gray_transparency">#5086888b</color>
-    <color name="green">#78ca4b</color>
-    <color name="green_button_auth">#5a935b</color>
-    <color name="green_forks_label">#6ed277</color>
+    <color name="gray_transparency">#5086888B</color>
+    <color name="green">#78CA4B</color>
+    <color name="green_button_auth">#5A935B</color>
+    <color name="green_forks_label">#6ED277</color>
     <color name="yellow">#F3E171</color>
     <color name="yellow_star">#F9D77F</color>
     <color name="white">#FFFFFFFF</color>

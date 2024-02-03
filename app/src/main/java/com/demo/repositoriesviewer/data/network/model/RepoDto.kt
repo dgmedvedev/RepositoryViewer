@@ -16,10 +16,6 @@ data class RepoDto(
     @Expose
     val stargazersCount: Int,
 
-    @SerializedName("watchers_count")
-    @Expose
-    val watchersCount: Int,
-
     @SerializedName("default_branch")
     @Expose
     val branchName: String,

@@ -26,6 +26,7 @@ object AppRepositoryImpl : AppRepository {
         var repoDetails: RepoDetails? = null
         for (repo in listRepos) {
             if (repo.id == repoId) {
+                setWatchers(repo)
                 repoDetails = repo.repoDetails
             }
         }
@@ -47,5 +48,10 @@ object AppRepositoryImpl : AppRepository {
         userName = ownerDto.login
         keyValueStorage.authToken = token
         return mapper.ownerDtoToUserInfo(ownerDto)
+    }
+
+    private suspend fun setWatchers(repo: Repo) {
+        val listWatchers = apiService.getListWatchers(userName, repo.repoDetails.name)
+        repo.repoDetails.watchers = listWatchers.size
     }
 }
