@@ -14,7 +14,7 @@ interface ApiService {
     @GET("users/{username}/repos")
     suspend fun getListRepos(
         @Path(PATH_PARAM_USERNAME) userName: String?,
-        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 100
+        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
     ): List<RepoDto>
 
     @GET("repos/{owner}/{repo}/subscribers")
