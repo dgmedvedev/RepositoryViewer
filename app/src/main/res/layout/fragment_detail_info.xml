@@ -32,7 +32,7 @@
                 android:drawablePadding="5dp"
                 android:textColor="@color/blue"
                 android:textSize="18sp"
-                app:drawableLeftCompat="@drawable/baseline_link_24"
+                app:drawableLeftCompat="@drawable/label_link_24"
                 app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
                 app:layout_constraintTop_toTopOf="@id/inner_constraint_layout"
                 tools:text="github.com/username/repo" />
@@ -44,7 +44,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="30dp"
                 android:contentDescription="@string/license_label"
-                android:src="@drawable/baseline_license_24"
+                android:src="@drawable/label_license_24"
                 app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
                 app:layout_constraintTop_toBottomOf="@id/tv_repo_url" />
 
@@ -80,7 +80,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="30dp"
                 android:contentDescription="@string/number_of_stars"
-                android:src="@drawable/baseline_star_24"
+                android:src="@drawable/label_star_24"
                 app:layout_constraintStart_toStartOf="@id/inner_constraint_layout"
                 app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
@@ -152,7 +152,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="30dp"
                 android:contentDescription="@string/number_of_watchers"
-                android:src="@drawable/baseline_watchers_24"
+                android:src="@drawable/label_watchers_24"
                 app:layout_constraintStart_toEndOf="@id/tv_title_forks"
                 app:layout_constraintTop_toBottomOf="@id/tv_license" />
 
