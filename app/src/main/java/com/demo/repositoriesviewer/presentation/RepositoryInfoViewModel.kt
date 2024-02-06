@@ -28,7 +28,7 @@ class RepositoryInfoViewModel : ViewModel() {
 
     fun loadData(repoId: String) {
         viewModelScope.launch {
-            val readme: String
+            val markdown: String
             val repo: Repo
             val repositoryDetails: RepoDetails
             try {
@@ -44,8 +44,12 @@ class RepositoryInfoViewModel : ViewModel() {
 
                 if (!ownerName.isNullOrBlank()) {
                     try {
-                        readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
-                        _readmeState.value = ReadmeState.Loaded(readme)
+                        markdown = getRepositoryReadmeUseCase(
+                            ownerName,
+                            repositoryName,
+                            branchName
+                        )
+                        _readmeState.value = ReadmeState.Loaded(markdown)
                     } catch (e: RuntimeException) {
                         _readmeState.value = ReadmeState.Empty
                     }

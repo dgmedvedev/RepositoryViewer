@@ -7,11 +7,12 @@ import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.concurrent.thread
 
 object AppRepositoryImpl : AppRepository {
 
@@ -44,10 +45,12 @@ object AppRepositoryImpl : AppRepository {
         repositoryName: String,
         branchName: String
     ): String {
-        thread { downloadRawReadme() }
+        val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
 
-        val json = apiService.getReadme(ownerName, repositoryName, branchName)
-        return json.toString()
+        val downloadUrl = jsonObject.get("download_url").toString()
+        val subDownloadUrl = downloadUrl.substring(1, downloadUrl.length - 1)
+
+        return downloadRawReadme(subDownloadUrl)
     }
 
     override suspend fun signIn(token: String): UserInfo {
@@ -63,20 +66,24 @@ object AppRepositoryImpl : AppRepository {
         repo.repoDetails.watchers = listWatchers.size
     }
 
-    private fun downloadRawReadme() {
-        val url = URL("https://raw.githubusercontent.com/dgmedvedev/Mechanic/master/README.md")
+    private suspend fun downloadRawReadme(downloadUrl: String): String =
+        withContext(Dispatchers.IO) {
+            var urlConnection: HttpURLConnection? = null
+            var line = ""
 
-        try {
-            val urlConnection = url.openConnection() as HttpURLConnection
-            val inputStream = urlConnection.inputStream
-            val reader = InputStreamReader(inputStream)
-
-            val bufferReader = BufferedReader(reader)
-            val line = bufferReader.use { it.readText() }
-            Log.d("TEST_APP", "line1: $line")
-        } catch (e: Exception) {
-            Log.d("TEST_APP", "Exception:  $e")
-        }
+            try {
+                val url = URL(downloadUrl)
+                urlConnection = url.openConnection() as HttpURLConnection
+                val inputStream = urlConnection.inputStream
+                val reader = InputStreamReader(inputStream)
+                val bufferReader = BufferedReader(reader)
+                line = bufferReader.use { it.readText() }
+            } catch (e: Exception) {
+                Log.d("TEST_APP", "Exception:  $e")
+            } finally {
+                urlConnection?.disconnect()
+            }
+            line
 
 //        II method
 //        with(url.openConnection() as HttpURLConnection) {
@@ -85,5 +92,5 @@ object AppRepositoryImpl : AppRepository {
 //            val line = inputStream.bufferedReader().use { it.readText() }
 //            Log.d("TEST_APP", "line2: $line")
 //        }
-    }
+        }
 }

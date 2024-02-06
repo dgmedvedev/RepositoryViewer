@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.demo.repositoriesviewer.R
@@ -74,7 +75,8 @@ class DetailInfoFragment : Fragment() {
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
-                binding.tvReadme.text = readmeState.markdown
+                binding.tvReadme.text =
+                    HtmlCompat.fromHtml(readmeState.markdown, HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Empty) {
                 binding.tvReadme.text = getString(R.string.readme_empty)
