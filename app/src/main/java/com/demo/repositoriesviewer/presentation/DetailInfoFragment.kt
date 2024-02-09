@@ -76,10 +76,16 @@ class DetailInfoFragment : Fragment() {
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
                 binding.tvReadme.text =
-                    HtmlCompat.fromHtml(readmeState.markdown, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                    HtmlCompat.fromHtml(
+                        readmeState.markdown,
+                        HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
+                    )
             }
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Empty) {
                 binding.tvReadme.text = getString(R.string.readme_empty)
+            }
+            if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
+                showError(readmeState.error)
             }
         }
     }

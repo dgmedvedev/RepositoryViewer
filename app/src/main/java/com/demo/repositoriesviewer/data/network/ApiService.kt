@@ -32,9 +32,6 @@ interface ApiService {
         @Query(QUERY_PARAM_REF) branchName: String
     ): JsonObject
 
-    @POST("markdown")
-    suspend fun convertReadme(@Body text: String): String
-
     companion object {
         private const val HEADER_PARAM_AUTHORIZATION = "Authorization"
         private const val QUERY_PARAM_PER_PAGE = "per_page"

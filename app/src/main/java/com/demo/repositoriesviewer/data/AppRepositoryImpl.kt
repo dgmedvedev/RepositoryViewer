@@ -1,6 +1,5 @@
 package com.demo.repositoriesviewer.data
 
-import android.util.Log
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -9,8 +8,6 @@ import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -45,12 +42,14 @@ object AppRepositoryImpl : AppRepository {
         repositoryName: String,
         branchName: String
     ): String {
-        val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
-
-        val downloadUrl = jsonObject.get("download_url").toString()
-        val subDownloadUrl = downloadUrl.substring(1, downloadUrl.length - 1)
-
-        return downloadRawReadme(subDownloadUrl)
+        val downloadUrl: String
+        try {
+            val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
+            downloadUrl = jsonObject.get("download_url").asString
+        } catch (e: Exception) {
+            throw Exception("Empty")
+        }
+        return downloadRawReadme(downloadUrl)
     }
 
     override suspend fun signIn(token: String): UserInfo {
@@ -69,28 +68,19 @@ object AppRepositoryImpl : AppRepository {
     private suspend fun downloadRawReadme(downloadUrl: String): String =
         withContext(Dispatchers.IO) {
             var urlConnection: HttpURLConnection? = null
-            var line = ""
+            var rawReadme: String
 
             try {
                 val url = URL(downloadUrl)
                 urlConnection = url.openConnection() as HttpURLConnection
-                val inputStream = urlConnection.inputStream
-                val reader = InputStreamReader(inputStream)
-                val bufferReader = BufferedReader(reader)
-                line = bufferReader.use { it.readText() }
+                with(urlConnection) {
+                    rawReadme = inputStream.bufferedReader().use { it.readText() }
+                }
             } catch (e: Exception) {
-                Log.d("TEST_APP", "Exception:  $e")
+                throw Exception("Exception in the AppRepositoryImpl: ${e.message}")
             } finally {
                 urlConnection?.disconnect()
             }
-            line
-
-//        II method
-//        with(url.openConnection() as HttpURLConnection) {
-//            //requestMethod = "GET"  // optional default is GET
-//            Log.d("TEST_APP", "\nSent 'GET' request to URL : $url; Response Code : $responseCode")
-//            val line = inputStream.bufferedReader().use { it.readText() }
-//            Log.d("TEST_APP", "line2: $line")
-//        }
+            rawReadme
         }
 }
