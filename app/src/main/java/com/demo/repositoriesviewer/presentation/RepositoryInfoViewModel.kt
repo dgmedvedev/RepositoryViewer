@@ -10,6 +10,9 @@ import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
 import kotlinx.coroutines.launch
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
 
 class RepositoryInfoViewModel : ViewModel() {
 
@@ -28,7 +31,7 @@ class RepositoryInfoViewModel : ViewModel() {
 
     fun loadData(repoId: String) {
         viewModelScope.launch {
-            val readme: String
+            val markdown: String
             val repo: Repo
             val repositoryDetails: RepoDetails
             try {
@@ -44,10 +47,22 @@ class RepositoryInfoViewModel : ViewModel() {
 
                 if (!ownerName.isNullOrBlank()) {
                     try {
-                        readme = getRepositoryReadmeUseCase(ownerName, repositoryName, branchName)
-                        _readmeState.value = ReadmeState.Loaded(readme)
-                    } catch (e: RuntimeException) {
-                        _readmeState.value = ReadmeState.Empty
+                        markdown = getRepositoryReadmeUseCase(
+                            ownerName,
+                            repositoryName,
+                            branchName
+                        )
+                        val flavour = CommonMarkFlavourDescriptor()
+                        val parsedTree =
+                            MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
+                        val html = HtmlGenerator(markdown, parsedTree, flavour).generateHtml()
+                        _readmeState.value = ReadmeState.Loaded(html)
+                    } catch (e: Exception) {
+                        if (e.message == "Empty") {
+                            _readmeState.value = ReadmeState.Empty
+                        } else {
+                            _readmeState.value = ReadmeState.Error(e.message.toString())
+                        }
                     }
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                         _readmeState.value = ReadmeState.Empty

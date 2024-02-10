@@ -6,6 +6,10 @@ import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 object AppRepositoryImpl : AppRepository {
 
@@ -38,8 +42,14 @@ object AppRepositoryImpl : AppRepository {
         repositoryName: String,
         branchName: String
     ): String {
-        val json = apiService.getReadme(ownerName, repositoryName, branchName)
-        return json.toString()
+        val downloadUrl: String
+        try {
+            val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
+            downloadUrl = jsonObject.get("download_url").asString
+        } catch (e: Exception) {
+            throw Exception("Empty")
+        }
+        return downloadRawReadme(downloadUrl)
     }
 
     override suspend fun signIn(token: String): UserInfo {
@@ -54,4 +64,23 @@ object AppRepositoryImpl : AppRepository {
         val listWatchers = apiService.getListWatchers(userName, repo.repoDetails.name)
         repo.repoDetails.watchers = listWatchers.size
     }
+
+    private suspend fun downloadRawReadme(downloadUrl: String): String =
+        withContext(Dispatchers.IO) {
+            var urlConnection: HttpURLConnection? = null
+            var rawReadme: String
+
+            try {
+                val url = URL(downloadUrl)
+                urlConnection = url.openConnection() as HttpURLConnection
+                with(urlConnection) {
+                    rawReadme = inputStream.bufferedReader().use { it.readText() }
+                }
+            } catch (e: Exception) {
+                throw Exception("Exception in the AppRepositoryImpl: ${e.message}")
+            } finally {
+                urlConnection?.disconnect()
+            }
+            rawReadme
+        }
 }

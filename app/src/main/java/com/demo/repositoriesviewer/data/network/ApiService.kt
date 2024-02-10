@@ -4,10 +4,7 @@ import com.demo.repositoriesviewer.data.network.model.OwnerDto
 import com.demo.repositoriesviewer.data.network.model.RepoDto
 import com.demo.repositoriesviewer.data.network.model.Watcher
 import com.google.gson.JsonObject
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
 
