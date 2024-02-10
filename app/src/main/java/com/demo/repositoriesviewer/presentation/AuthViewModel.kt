@@ -9,12 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
+import java.net.InetAddress
 import java.util.regex.Pattern
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
@@ -43,22 +42,44 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
     }
 
-    fun onSignButtonPressed() {
-        val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
-        if (tokenIsValid(enteredToken)) {
-            _state.value = State.Loading
-            viewModelScope.launch {
-                try {
-                    signInUseCase(enteredToken)
-                    delay(500)
-                    token.value = enteredToken
-                    saveToken(enteredToken)
-                    _actions.send(Action.RouteToMain)
-                } catch (e: RuntimeException) {
-                    _actions.send(Action.ShowError(e.message.toString()))
+    suspend fun onSignButtonPressed() {
+        if (isInternetAvailable()) {
+            val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
+            if (tokenIsValid(enteredToken)) {
+                _state.value = State.Loading
+                viewModelScope.launch {
+                    try {
+                        signInUseCase(enteredToken)
+                        delay(500)
+                        token.value = enteredToken
+                        saveToken(enteredToken)
+                        _actions.send(Action.RouteToMain)
+                    } catch (e: RuntimeException) {
+                        _actions.send(Action.ShowError(e.message.toString()))
+                    }
+                    _state.value = State.Idle
                 }
-                _state.value = State.Idle
             }
+        } else {
+            viewModelScope.launch {
+                _actions.send(
+                    Action.ShowError(
+                        getApplication<Application>().getString(R.string.internet_access_error)
+                    )
+                )
+            }
+        }
+    }
+
+    private suspend fun isInternetAvailable(): Boolean {
+        return try {
+            val ipAddress: InetAddress =
+                withContext(Dispatchers.IO) {
+                    InetAddress.getByName("api.github.com")
+                }
+            !ipAddress.equals("")
+        } catch (e: Exception) {
+            false
         }
     }
 

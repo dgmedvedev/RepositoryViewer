@@ -107,7 +107,9 @@ class AuthFragment : Fragment() {
             signButton.setOnClickListener {
                 val newToken: String = etAuthorization.text.toString()
                 authViewModel.repository.keyValueStorage.authToken = newToken
-                authViewModel.onSignButtonPressed()
+                lifecycleScope.launch {
+                    authViewModel.onSignButtonPressed()
+                }
             }
             etAuthorization.addTextChangedListener {
                 tilAuthorization.error = null
