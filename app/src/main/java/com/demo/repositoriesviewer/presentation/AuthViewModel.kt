@@ -39,12 +39,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getToken(): String? {
-        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
+        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, VALUE_IS_EMPTY)
     }
 
     suspend fun onSignButtonPressed() {
         if (isInternetAvailable()) {
-            val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
+            val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
             if (tokenIsValid(enteredToken)) {
                 _state.value = State.Loading
                 viewModelScope.launch {
@@ -75,9 +75,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return try {
             val ipAddress: InetAddress =
                 withContext(Dispatchers.IO) {
-                    InetAddress.getByName("api.github.com")
+                    InetAddress.getByName(AVAILABLE_ADDRESS)
                 }
-            !ipAddress.equals("")
+            !ipAddress.equals(VALUE_IS_EMPTY)
         } catch (e: Exception) {
             false
         }
@@ -95,7 +95,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             )
             return false
         }
-        if (Pattern.matches(".*\\p{InCyrillic}.*", newToken)) {
+        if (Pattern.matches(IN_CYRILLIC, newToken)) {
             _state.value = State.InvalidInput(
                 getApplication<Application>()
                     .getString(R.string.value_invalid)
@@ -106,9 +106,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
+        const val AVAILABLE_ADDRESS = "api.github.com"
+        const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
         const val NAME_SHARED_PREFERENCE = "shared_preference"
         const val KEY_SHARED_PREFERENCE = "token_value"
-        const val TOKEN_IS_BLANK = ""
+        const val VALUE_IS_EMPTY = ""
     }
 
     sealed interface State {

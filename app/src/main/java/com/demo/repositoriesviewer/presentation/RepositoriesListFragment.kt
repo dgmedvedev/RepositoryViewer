@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
+import kotlinx.coroutines.launch
 
 class RepositoriesListFragment : Fragment() {
 
@@ -28,7 +30,8 @@ class RepositoriesListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        repositoriesListViewModel = ViewModelProvider(this)[RepositoriesListViewModel::class.java]
+        repositoriesListViewModel =
+            ViewModelProvider(this)[RepositoriesListViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -46,7 +49,9 @@ class RepositoriesListFragment : Fragment() {
         binding.repoRecyclerView.adapter = repoListAdapter
         observeViewModel()
         setListeners()
-        repositoriesListViewModel.loadData()
+        lifecycleScope.launch {
+            repositoriesListViewModel.loadData()
+        }
     }
 
     override fun onDestroyView() {

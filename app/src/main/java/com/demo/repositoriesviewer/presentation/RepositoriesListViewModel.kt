@@ -1,15 +1,17 @@
 package com.demo.repositoriesviewer.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.InetAddress
 
-class RepositoriesListViewModel : ViewModel() {
+class RepositoriesListViewModel(application: Application) : AndroidViewModel(application) {
 
     val repository: AppRepositoryImpl = AppRepositoryImpl
 
@@ -19,7 +21,19 @@ class RepositoriesListViewModel : ViewModel() {
     val state: LiveData<State>
         get() = _state
 
-    fun loadData() {
+    suspend fun loadData() {
+        if (isInternetAvailable()) {
+            initData()
+        } else {
+            showError(
+                RuntimeException(
+                    getApplication<Application>().getString(R.string.internet_access_error)
+                )
+            )
+        }
+    }
+
+    private fun initData() {
         viewModelScope.launch {
             val repoList: List<Repo>
             try {
@@ -35,11 +49,28 @@ class RepositoriesListViewModel : ViewModel() {
         }
     }
 
+    private suspend fun isInternetAvailable(): Boolean {
+        return try {
+            val ipAddress: InetAddress =
+                withContext(Dispatchers.IO) {
+                    InetAddress.getByName(AVAILABLE_ADDRESS)
+                }
+            !ipAddress.equals(VALUE_IS_EMPTY)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun showError(error: Throwable) {
         when (error) {
             is Exception -> _state.value = State.Error(error.message.toString())
             is Error -> throw Error(error.message)
         }
+    }
+
+    companion object {
+        const val AVAILABLE_ADDRESS = "api.github.com"
+        const val VALUE_IS_EMPTY = ""
     }
 
     sealed interface State {
