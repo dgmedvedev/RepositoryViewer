@@ -1,7 +1,10 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -21,35 +24,31 @@ class RepositoriesListViewModel(application: Application) : AndroidViewModel(app
     val state: LiveData<State>
         get() = _state
 
-    suspend fun loadData() {
-        if (isInternetAvailable()) {
-            initData()
-        } else {
-            showError(
-                RuntimeException(
-                    getApplication<Application>().getString(R.string.internet_access_error)
-                )
-            )
-        }
-    }
-
-    private fun initData() {
+    fun loadData() {
         viewModelScope.launch {
-            val repoList: List<Repo>
-            try {
-                _state.value = State.Loading
-                repoList = getRepositoriesUseCase()
-                _state.value = State.Loaded(repoList)
-                if (repoList.isEmpty()) {
-                    _state.value = State.Empty
+            if (isInternetAvailable()) {
+                val repoList: List<Repo>
+                try {
+                    _state.value = State.Loading
+                    repoList = getRepositoriesUseCase()
+                    _state.value = State.Loaded(repoList)
+                    if (repoList.isEmpty()) {
+                        _state.value = State.Empty
+                    }
+                } catch (error: Throwable) {
+                    showError(error)
                 }
-            } catch (error: Throwable) {
-                showError(error)
+            } else {
+                showError(
+                    RuntimeException(
+                        getApplication<Application>().getString(R.string.internet_access_error)
+                    )
+                )
             }
         }
     }
 
-    private suspend fun isInternetAvailable(): Boolean {
+    suspend fun isInternetAvailable(): Boolean {
         return try {
             val ipAddress: InetAddress =
                 withContext(Dispatchers.IO) {

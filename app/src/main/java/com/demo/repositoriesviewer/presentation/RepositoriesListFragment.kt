@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
-import kotlinx.coroutines.launch
 
 class RepositoriesListFragment : Fragment() {
 
@@ -49,9 +47,7 @@ class RepositoriesListFragment : Fragment() {
         binding.repoRecyclerView.adapter = repoListAdapter
         observeViewModel()
         setListeners()
-        lifecycleScope.launch {
-            repositoriesListViewModel.loadData()
-        }
+        repositoriesListViewModel.loadData()
     }
 
     override fun onDestroyView() {

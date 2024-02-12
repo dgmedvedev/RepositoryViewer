@@ -33,40 +33,37 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-    }
-
     fun getToken(): String? {
         return sharedPreferences.getString(KEY_SHARED_PREFERENCE, VALUE_IS_EMPTY)
     }
 
-    suspend fun onSignButtonPressed() {
-        if (isInternetAvailable()) {
-            val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
-            if (tokenIsValid(enteredToken)) {
-                _state.value = State.Loading
-                viewModelScope.launch {
-                    try {
-                        signInUseCase(enteredToken)
-                        delay(500)
-                        token.value = enteredToken
-                        saveToken(enteredToken)
-                        _actions.send(Action.RouteToMain)
-                    } catch (e: RuntimeException) {
-                        _actions.send(Action.ShowError(e.message.toString()))
+    fun onSignButtonPressed() {
+        viewModelScope.launch {
+            if (isInternetAvailable()) {
+                val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
+                if (tokenIsValid(enteredToken)) {
+                    _state.value = State.Loading
+                    viewModelScope.launch {
+                        try {
+                            signInUseCase(enteredToken)
+                            delay(500)
+                            token.value = enteredToken
+                            saveToken(enteredToken)
+                            _actions.send(Action.RouteToMain)
+                        } catch (e: RuntimeException) {
+                            _actions.send(Action.ShowError(e.message.toString()))
+                        }
+                        _state.value = State.Idle
                     }
-                    _state.value = State.Idle
                 }
-            }
-        } else {
-            viewModelScope.launch {
-                _actions.send(
-                    Action.ShowError(
-                        getApplication<Application>().getString(R.string.internet_access_error)
+            } else {
+                viewModelScope.launch {
+                    _actions.send(
+                        Action.ShowError(
+                            getApplication<Application>().getString(R.string.internet_access_error)
+                        )
                     )
-                )
+                }
             }
         }
     }
