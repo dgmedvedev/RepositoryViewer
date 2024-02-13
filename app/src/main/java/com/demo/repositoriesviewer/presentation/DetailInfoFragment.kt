@@ -10,8 +10,10 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
+import kotlinx.coroutines.launch
 
 class DetailInfoFragment : Fragment() {
 
@@ -45,7 +47,9 @@ class DetailInfoFragment : Fragment() {
         observeViewModel()
         setListeners()
         repoId?.let {
-            repositoryInfoViewModel.loadData(it)
+            lifecycleScope.launch {
+                repositoryInfoViewModel.loadData(it)
+            }
         }
     }
 

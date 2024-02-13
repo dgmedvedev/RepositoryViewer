@@ -5,14 +5,15 @@ import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.regex.Pattern
 
@@ -37,13 +38,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return sharedPreferences.getString(KEY_SHARED_PREFERENCE, VALUE_IS_EMPTY)
     }
 
-    fun onSignButtonPressed() {
-        viewModelScope.launch {
+    suspend fun onSignButtonPressed() {
             if (isInternetAvailable()) {
                 val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
                 if (tokenIsValid(enteredToken)) {
                     _state.value = State.Loading
-                    viewModelScope.launch {
                         try {
                             signInUseCase(enteredToken)
                             delay(500)
@@ -54,18 +53,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                             _actions.send(Action.ShowError(e.message.toString()))
                         }
                         _state.value = State.Idle
-                    }
                 }
             } else {
-                viewModelScope.launch {
                     _actions.send(
                         Action.ShowError(
                             getApplication<Application>().getString(R.string.internet_access_error)
                         )
                     )
-                }
             }
-        }
     }
 
     private suspend fun isInternetAvailable(): Boolean {

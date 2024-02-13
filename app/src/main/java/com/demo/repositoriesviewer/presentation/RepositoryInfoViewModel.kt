@@ -3,13 +3,11 @@ package com.demo.repositoriesviewer.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
-import kotlinx.coroutines.launch
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -29,8 +27,7 @@ class RepositoryInfoViewModel : ViewModel() {
     val readmeState: LiveData<ReadmeState>
         get() = _readmeState
 
-    fun loadData(repoId: String) {
-        viewModelScope.launch {
+    suspend fun loadData(repoId: String) {
             val markdown: String
             val repo: Repo
             val repositoryDetails: RepoDetails
@@ -40,7 +37,6 @@ class RepositoryInfoViewModel : ViewModel() {
 
                 repositoryDetails = getRepositoryUseCase(repoId)
                 repo = Repo(repoId, repositoryDetails)
-                _state.value = State.Loaded(repo, ReadmeState.Loading)
                 val ownerName = repo.repoDetails.userInfo?.name
                 val repositoryName = repo.repoDetails.name
                 val branchName = repo.repoDetails.branchName
@@ -64,6 +60,7 @@ class RepositoryInfoViewModel : ViewModel() {
                             _readmeState.value = ReadmeState.Error(e.message.toString())
                         }
                     }
+                    _state.value = State.Loaded(repo, ReadmeState.Loading)
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                         _readmeState.value = ReadmeState.Empty
                     }
@@ -73,7 +70,6 @@ class RepositoryInfoViewModel : ViewModel() {
             } catch (error: Throwable) {
                 showError(error)
             }
-        }
     }
 
     private fun showError(error: Throwable) {
