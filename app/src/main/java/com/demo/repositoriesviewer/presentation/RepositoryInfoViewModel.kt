@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.presentation
 
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,8 @@ import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -28,48 +31,55 @@ class RepositoryInfoViewModel : ViewModel() {
         get() = _readmeState
 
     suspend fun loadData(repoId: String) {
-            val markdown: String
-            val repo: Repo
-            val repositoryDetails: RepoDetails
-            try {
-                _state.value = State.Loading
-                _readmeState.value = ReadmeState.Loading
+        val repo: Repo
+        val repositoryDetails: RepoDetails
+        try {
+            _state.value = State.Loading
+            _readmeState.value = ReadmeState.Loading
 
+            repo = withContext(Dispatchers.IO) {
                 repositoryDetails = getRepositoryUseCase(repoId)
-                repo = Repo(repoId, repositoryDetails)
-                val ownerName = repo.repoDetails.userInfo?.name
-                val repositoryName = repo.repoDetails.name
-                val branchName = repo.repoDetails.branchName
+                Repo(repoId, repositoryDetails)
+            }
+            val ownerName = repo.repoDetails.userInfo?.name
+            val repositoryName = repo.repoDetails.name
+            val branchName = repo.repoDetails.branchName
 
-                if (!ownerName.isNullOrBlank()) {
-                    try {
-                        markdown = getRepositoryReadmeUseCase(
+            if (!ownerName.isNullOrBlank()) {
+                try {
+                    val markdown = withContext(Dispatchers.IO) {
+                        val rawReadme = getRepositoryReadmeUseCase(
                             ownerName,
                             repositoryName,
                             branchName
                         )
                         val flavour = CommonMarkFlavourDescriptor()
                         val parsedTree =
-                            MarkdownParser(flavour).buildMarkdownTreeFromString(markdown)
-                        val html = HtmlGenerator(markdown, parsedTree, flavour).generateHtml()
-                        _readmeState.value = ReadmeState.Loaded(html)
-                    } catch (e: Exception) {
-                        if (e.message == "Empty") {
-                            _readmeState.value = ReadmeState.Empty
-                        } else {
-                            _readmeState.value = ReadmeState.Error(e.message.toString())
-                        }
+                            MarkdownParser(flavour).buildMarkdownTreeFromString(rawReadme)
+                        val html = HtmlGenerator(rawReadme, parsedTree, flavour).generateHtml()
+                        HtmlCompat.fromHtml(
+                            html,
+                            HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
+                        ).toString()
                     }
-                    _state.value = State.Loaded(repo, ReadmeState.Loading)
-                    if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
+                    _readmeState.value = ReadmeState.Loaded(markdown)
+                } catch (e: Exception) {
+                    if (e.message == "Empty") {
                         _readmeState.value = ReadmeState.Empty
+                    } else {
+                        _readmeState.value = ReadmeState.Error(e.message.toString())
                     }
-                } else {
-                    _readmeState.value = ReadmeState.Error("ownerName is null or blank")
                 }
-            } catch (error: Throwable) {
-                showError(error)
+                _state.value = State.Loaded(repo, ReadmeState.Loading)
+                if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
+                    _readmeState.value = ReadmeState.Empty
+                }
+            } else {
+                _readmeState.value = ReadmeState.Error("ownerName is null or blank")
             }
+        } catch (error: Throwable) {
+            showError(error)
+        }
     }
 
     private fun showError(error: Throwable) {
