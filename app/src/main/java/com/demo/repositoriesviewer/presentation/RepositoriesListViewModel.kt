@@ -23,28 +23,29 @@ class RepositoriesListViewModel(application: Application) : AndroidViewModel(app
         get() = _state
 
     suspend fun loadData() {
-            if (isInternetAvailable()) {
-                val repoList: List<Repo>
-                try {
-                    _state.value = State.Loading
-                    repoList = getRepositoriesUseCase()
-                    _state.value = State.Loaded(repoList)
-                    if (repoList.isEmpty()) {
-                        _state.value = State.Empty
-                    }
-                } catch (error: Throwable) {
-                    showError(error)
+        if (isInternetAvailable()) {
+            try {
+                _state.value = State.Loading
+                val repoList = withContext(Dispatchers.IO) {
+                    getRepositoriesUseCase()
                 }
-            } else {
-                showError(
-                    RuntimeException(
-                        getApplication<Application>().getString(R.string.internet_access_error)
-                    )
-                )
+                _state.value = State.Loaded(repoList)
+                if (repoList.isEmpty()) {
+                    _state.value = State.Empty
+                }
+            } catch (error: Throwable) {
+                showError(error)
             }
+        } else {
+            showError(
+                RuntimeException(
+                    getApplication<Application>().getString(R.string.internet_access_error)
+                )
+            )
+        }
     }
 
-    suspend fun isInternetAvailable(): Boolean {
+    private suspend fun isInternetAvailable(): Boolean {
         return try {
             val ipAddress: InetAddress =
                 withContext(Dispatchers.IO) {
