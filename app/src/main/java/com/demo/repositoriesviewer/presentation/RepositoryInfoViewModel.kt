@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
-import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
 import kotlinx.coroutines.Dispatchers
@@ -31,21 +30,17 @@ class RepositoryInfoViewModel : ViewModel() {
         get() = _readmeState
 
     suspend fun loadData(repoId: String) {
-        val repo: Repo
-        val repositoryDetails: RepoDetails
         try {
             _state.value = State.Loading
-            _readmeState.value = ReadmeState.Loading
 
-            repo = withContext(Dispatchers.IO) {
-                repositoryDetails = getRepositoryUseCase(repoId)
-                Repo(repoId, repositoryDetails)
-            }
+            val repo = downloadRepo(repoId)
             val ownerName = repo.repoDetails.userInfo?.name
             val repositoryName = repo.repoDetails.name
             val branchName = repo.repoDetails.branchName
+            _state.value = State.Loaded(repo, ReadmeState.Loading)
 
             if (!ownerName.isNullOrBlank()) {
+                _readmeState.value = ReadmeState.Loading
                 try {
                     val markdown = withContext(Dispatchers.IO) {
                         val rawReadme = getRepositoryReadmeUseCase(
@@ -53,24 +48,14 @@ class RepositoryInfoViewModel : ViewModel() {
                             repositoryName,
                             branchName
                         )
-                        val flavour = CommonMarkFlavourDescriptor()
-                        val parsedTree =
-                            MarkdownParser(flavour).buildMarkdownTreeFromString(rawReadme)
-                        val html = HtmlGenerator(rawReadme, parsedTree, flavour).generateHtml()
-                        HtmlCompat.fromHtml(
-                            html,
-                            HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
-                        ).toString()
+                        rawReadmeToHtml(rawReadme)
                     }
                     _readmeState.value = ReadmeState.Loaded(markdown)
                 } catch (e: Exception) {
-                    if (e.message == "Empty") {
-                        _readmeState.value = ReadmeState.Empty
-                    } else {
-                        _readmeState.value = ReadmeState.Error(e.message.toString())
-                    }
+                    _readmeState.value =
+                        if (e.message == "Empty") ReadmeState.Empty
+                        else ReadmeState.Error(e.message.toString())
                 }
-                _state.value = State.Loaded(repo, ReadmeState.Loading)
                 if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                     _readmeState.value = ReadmeState.Empty
                 }
@@ -80,6 +65,23 @@ class RepositoryInfoViewModel : ViewModel() {
         } catch (error: Throwable) {
             showError(error)
         }
+    }
+
+    private suspend fun downloadRepo(repoId: String) =
+        withContext(Dispatchers.IO) {
+            val repositoryDetails = getRepositoryUseCase(repoId)
+            Repo(repoId, repositoryDetails)
+        }
+
+    private fun rawReadmeToHtml(rawReadme: String) = run {
+        val flavour = CommonMarkFlavourDescriptor()
+        val parsedTree =
+            MarkdownParser(flavour).buildMarkdownTreeFromString(rawReadme)
+        val html = HtmlGenerator(rawReadme, parsedTree, flavour).generateHtml()
+        HtmlCompat.fromHtml(
+            html,
+            HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
+        ).toString()
     }
 
     private fun showError(error: Throwable) {
@@ -92,11 +94,7 @@ class RepositoryInfoViewModel : ViewModel() {
     sealed interface State {
         object Loading : State
         data class Error(val error: String) : State
-
-        data class Loaded(
-            val githubRepo: Repo,
-            val readmeState: ReadmeState
-        ) : State
+        data class Loaded(val githubRepo: Repo, val readmeState: ReadmeState) : State
     }
 
     sealed interface ReadmeState {

@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
@@ -13,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.regex.Pattern
@@ -38,37 +40,38 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         return sharedPreferences.getString(KEY_SHARED_PREFERENCE, VALUE_IS_EMPTY)
     }
 
-    suspend fun onSignButtonPressed() {
+    fun onSignButtonPressed() {
+        viewModelScope.launch {
             if (isInternetAvailable()) {
+                _state.value = State.Loading
                 val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
                 if (tokenIsValid(enteredToken)) {
-                    _state.value = State.Loading
-                        try {
-                            signInUseCase(enteredToken)
-                            delay(500)
-                            token.value = enteredToken
-                            saveToken(enteredToken)
-                            _actions.send(Action.RouteToMain)
-                        } catch (e: RuntimeException) {
-                            _actions.send(Action.ShowError(e.message.toString()))
-                        }
-                        _state.value = State.Idle
+                    try {
+                        signInUseCase(enteredToken)
+                        delay(500)
+                        token.value = enteredToken
+                        saveToken(enteredToken)
+                        _actions.send(Action.RouteToMain)
+                    } catch (e: RuntimeException) {
+                        _actions.send(Action.ShowError(e.message.toString()))
+                    }
+                    _state.value = State.Idle
                 }
             } else {
-                    _actions.send(
-                        Action.ShowError(
-                            getApplication<Application>().getString(R.string.internet_access_error)
-                        )
+                _actions.send(
+                    Action.ShowError(
+                        getApplication<Application>().getString(R.string.internet_access_error)
                     )
+                )
             }
+        }
     }
 
     private suspend fun isInternetAvailable(): Boolean {
         return try {
-            val ipAddress: InetAddress =
-                withContext(Dispatchers.IO) {
-                    InetAddress.getByName(AVAILABLE_ADDRESS)
-                }
+            val ipAddress: InetAddress = withContext(Dispatchers.IO) {
+                InetAddress.getByName(AVAILABLE_ADDRESS)
+            }
             !ipAddress.equals(VALUE_IS_EMPTY)
         } catch (e: Exception) {
             false

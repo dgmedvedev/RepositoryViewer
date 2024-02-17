@@ -75,14 +75,24 @@ class DetailInfoFragment : Fragment() {
             if (state is RepositoryInfoViewModel.State.Error) {
                 showError(state.error)
             }
+            if (state is RepositoryInfoViewModel.State.Loading) {
+                viewIsInvisible()
+            } else {
+                viewIsVisible()
+            }
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
-            if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
-                binding.tvReadme.text = readmeState.markdown
-            }
-            if (readmeState is RepositoryInfoViewModel.ReadmeState.Empty) {
-                binding.tvReadme.text = getString(R.string.readme_empty)
-            }
+            binding.progressBar.visibility =
+                if (readmeState == RepositoryInfoViewModel.ReadmeState.Loading) {
+                    binding.tvReadme.visibility = View.GONE
+                    View.VISIBLE
+                } else {
+                    binding.tvReadme.visibility = View.VISIBLE
+                    View.GONE
+                }
+            binding.tvReadme.text =
+                if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) readmeState.markdown
+                else getString(R.string.readme_empty)
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
                 showError(readmeState.error)
             }
@@ -118,6 +128,42 @@ class DetailInfoFragment : Fragment() {
         }
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
+    }
+
+    private fun viewIsInvisible() {
+        with(binding) {
+            tvRepoUrl.visibility = View.GONE
+            ivLicenseLabel.visibility = View.GONE
+            tvTitleLicense.visibility = View.GONE
+            tvLicense.visibility = View.GONE
+            ivLabelStars.visibility = View.GONE
+            tvStars.visibility = View.GONE
+            tvTitleStars.visibility = View.GONE
+            ivLabelForks.visibility = View.GONE
+            tvForks.visibility = View.GONE
+            tvTitleForks.visibility = View.GONE
+            ivLabelWatchers.visibility = View.GONE
+            tvWatchers.visibility = View.GONE
+            tvTitleWatchers.visibility = View.GONE
+        }
+    }
+
+    private fun viewIsVisible() {
+        with(binding) {
+            tvRepoUrl.visibility = View.VISIBLE
+            ivLicenseLabel.visibility = View.VISIBLE
+            tvTitleLicense.visibility = View.VISIBLE
+            tvLicense.visibility = View.VISIBLE
+            ivLabelStars.visibility = View.VISIBLE
+            tvStars.visibility = View.VISIBLE
+            tvTitleStars.visibility = View.VISIBLE
+            ivLabelForks.visibility = View.VISIBLE
+            tvForks.visibility = View.VISIBLE
+            tvTitleForks.visibility = View.VISIBLE
+            ivLabelWatchers.visibility = View.VISIBLE
+            tvWatchers.visibility = View.VISIBLE
+            tvTitleWatchers.visibility = View.VISIBLE
+        }
     }
 
     companion object {
