@@ -9,10 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
-import kotlinx.coroutines.launch
 
 class DetailInfoFragment : Fragment() {
 
@@ -43,22 +41,16 @@ class DetailInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        repoId?.let {
+            repositoryInfoViewModel.loadData(it)
+        }
         observeViewModel()
         setListeners()
-        repoId?.let {
-            lifecycleScope.launch {
-                repositoryInfoViewModel.loadData(it)
-            }
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun parseParams() {
-        repoId = requireArguments().getString(REPO_ID)
     }
 
     private fun observeViewModel() {
@@ -102,6 +94,10 @@ class DetailInfoFragment : Fragment() {
     private fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
+    }
+
+    private fun parseParams() {
+        repoId = requireArguments().getString(REPO_ID)
     }
 
     private fun setListeners() {

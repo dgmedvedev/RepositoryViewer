@@ -4,11 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.demo.repositoriesviewer.R
+import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 
@@ -22,8 +23,8 @@ class RepositoriesListViewModel(application: Application) : AndroidViewModel(app
     val state: LiveData<State>
         get() = _state
 
-    suspend fun loadData() {
-        if (isInternetAvailable()) {
+    fun loadData() {
+        viewModelScope.launch {
             try {
                 _state.value = State.Loading
                 val repoList = withContext(Dispatchers.IO) {
@@ -36,21 +37,14 @@ class RepositoriesListViewModel(application: Application) : AndroidViewModel(app
             } catch (error: Throwable) {
                 showError(error)
             }
-        } else {
-            showError(
-                RuntimeException(
-                    getApplication<Application>().getString(R.string.internet_access_error)
-                )
-            )
         }
     }
 
-    private suspend fun isInternetAvailable(): Boolean {
+    suspend fun isInternetAvailable(): Boolean {
         return try {
-            val ipAddress: InetAddress =
-                withContext(Dispatchers.IO) {
-                    InetAddress.getByName(AVAILABLE_ADDRESS)
-                }
+            val ipAddress: InetAddress = withContext(Dispatchers.IO) {
+                InetAddress.getByName(AVAILABLE_ADDRESS)
+            }
             !ipAddress.equals(VALUE_IS_EMPTY)
         } catch (e: Exception) {
             false
