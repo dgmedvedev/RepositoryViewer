@@ -9,12 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.InetAddress
 import java.util.regex.Pattern
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,31 +36,45 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferences =
         application.getSharedPreferences(NAME_SHARED_PREFERENCE, MODE_PRIVATE)
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-    }
-
     fun getToken(): String? {
-        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, "")
+        return sharedPreferences.getString(KEY_SHARED_PREFERENCE, VALUE_IS_EMPTY)
     }
 
     fun onSignButtonPressed() {
-        val enteredToken = repository.keyValueStorage.authToken ?: TOKEN_IS_BLANK
-        if (tokenIsValid(enteredToken)) {
-            _state.value = State.Loading
-            viewModelScope.launch {
-                try {
-                    signInUseCase(enteredToken)
-                    delay(500)
-                    token.value = enteredToken
-                    saveToken(enteredToken)
-                    _actions.send(Action.RouteToMain)
-                } catch (e: RuntimeException) {
-                    _actions.send(Action.ShowError(e.message.toString()))
+        viewModelScope.launch {
+            if (isInternetAvailable()) {
+                _state.value = State.Loading
+                val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
+                if (tokenIsValid(enteredToken)) {
+                    try {
+                        signInUseCase(enteredToken)
+                        delay(500)
+                        token.value = enteredToken
+                        saveToken(enteredToken)
+                        _actions.send(Action.RouteToMain)
+                    } catch (e: RuntimeException) {
+                        _actions.send(Action.ShowError(e.message.toString()))
+                    }
+                    _state.value = State.Idle
                 }
-                _state.value = State.Idle
+            } else {
+                _actions.send(
+                    Action.ShowError(
+                        getApplication<Application>().getString(R.string.internet_access_error)
+                    )
+                )
             }
+        }
+    }
+
+    private suspend fun isInternetAvailable(): Boolean {
+        return try {
+            val ipAddress: InetAddress = withContext(Dispatchers.IO) {
+                InetAddress.getByName(AVAILABLE_ADDRESS)
+            }
+            !ipAddress.equals(VALUE_IS_EMPTY)
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -74,7 +90,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             )
             return false
         }
-        if (Pattern.matches(".*\\p{InCyrillic}.*", newToken)) {
+        if (Pattern.matches(IN_CYRILLIC, newToken)) {
             _state.value = State.InvalidInput(
                 getApplication<Application>()
                     .getString(R.string.value_invalid)
@@ -85,9 +101,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
+        const val AVAILABLE_ADDRESS = "api.github.com"
+        const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
         const val NAME_SHARED_PREFERENCE = "shared_preference"
         const val KEY_SHARED_PREFERENCE = "token_value"
-        const val TOKEN_IS_BLANK = ""
+        const val VALUE_IS_EMPTY = ""
     }
 
     sealed interface State {

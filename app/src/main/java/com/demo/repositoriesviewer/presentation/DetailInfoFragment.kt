@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.demo.repositoriesviewer.R
@@ -42,20 +41,16 @@ class DetailInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeViewModel()
-        setListeners()
         repoId?.let {
             repositoryInfoViewModel.loadData(it)
         }
+        observeViewModel()
+        setListeners()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun parseParams() {
-        repoId = requireArguments().getString(REPO_ID)
     }
 
     private fun observeViewModel() {
@@ -72,18 +67,24 @@ class DetailInfoFragment : Fragment() {
             if (state is RepositoryInfoViewModel.State.Error) {
                 showError(state.error)
             }
+            if (state is RepositoryInfoViewModel.State.Loading) {
+                viewIsInvisible()
+            } else {
+                viewIsVisible()
+            }
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
-            if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
-                binding.tvReadme.text =
-                    HtmlCompat.fromHtml(
-                        readmeState.markdown,
-                        HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM
-                    )
-            }
-            if (readmeState is RepositoryInfoViewModel.ReadmeState.Empty) {
-                binding.tvReadme.text = getString(R.string.readme_empty)
-            }
+            binding.progressBar.visibility =
+                if (readmeState == RepositoryInfoViewModel.ReadmeState.Loading) {
+                    binding.tvReadme.visibility = View.GONE
+                    View.VISIBLE
+                } else {
+                    binding.tvReadme.visibility = View.VISIBLE
+                    View.GONE
+                }
+            binding.tvReadme.text =
+                if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) readmeState.markdown
+                else getString(R.string.readme_empty)
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
                 showError(readmeState.error)
             }
@@ -93,6 +94,10 @@ class DetailInfoFragment : Fragment() {
     private fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
+    }
+
+    private fun parseParams() {
+        repoId = requireArguments().getString(REPO_ID)
     }
 
     private fun setListeners() {
@@ -119,6 +124,42 @@ class DetailInfoFragment : Fragment() {
         }
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
+    }
+
+    private fun viewIsInvisible() {
+        with(binding) {
+            tvRepoUrl.visibility = View.GONE
+            ivLicenseLabel.visibility = View.GONE
+            tvTitleLicense.visibility = View.GONE
+            tvLicense.visibility = View.GONE
+            ivLabelStars.visibility = View.GONE
+            tvStars.visibility = View.GONE
+            tvTitleStars.visibility = View.GONE
+            ivLabelForks.visibility = View.GONE
+            tvForks.visibility = View.GONE
+            tvTitleForks.visibility = View.GONE
+            ivLabelWatchers.visibility = View.GONE
+            tvWatchers.visibility = View.GONE
+            tvTitleWatchers.visibility = View.GONE
+        }
+    }
+
+    private fun viewIsVisible() {
+        with(binding) {
+            tvRepoUrl.visibility = View.VISIBLE
+            ivLicenseLabel.visibility = View.VISIBLE
+            tvTitleLicense.visibility = View.VISIBLE
+            tvLicense.visibility = View.VISIBLE
+            ivLabelStars.visibility = View.VISIBLE
+            tvStars.visibility = View.VISIBLE
+            tvTitleStars.visibility = View.VISIBLE
+            ivLabelForks.visibility = View.VISIBLE
+            tvForks.visibility = View.VISIBLE
+            tvTitleForks.visibility = View.VISIBLE
+            ivLabelWatchers.visibility = View.VISIBLE
+            tvWatchers.visibility = View.VISIBLE
+            tvTitleWatchers.visibility = View.VISIBLE
+        }
     }
 
     companion object {

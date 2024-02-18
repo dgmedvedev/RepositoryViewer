@@ -44,8 +44,10 @@ object AppRepositoryImpl : AppRepository {
     ): String {
         val downloadUrl: String
         try {
-            val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
-            downloadUrl = jsonObject.get("download_url").asString
+            downloadUrl = withContext(Dispatchers.IO) {
+                val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
+                jsonObject.get("download_url").asString
+            }
         } catch (e: Exception) {
             throw Exception("Empty")
         }
