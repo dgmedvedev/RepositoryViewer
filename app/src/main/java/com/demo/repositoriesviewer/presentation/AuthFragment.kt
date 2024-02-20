@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentAuthBinding
 import kotlinx.coroutines.launch
@@ -59,13 +60,17 @@ class AuthFragment : Fragment() {
         }
     }
 
-    private fun launchFragment(fragment: Fragment) {
-        requireActivity().supportFragmentManager.popBackStack()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
+    private fun launchFragment() {
+        findNavController().navigate(R.id.action_authFragment_to_repositoriesListFragment)
     }
+
+//    private fun launchFragment(fragment: Fragment) {
+//        requireActivity().supportFragmentManager.popBackStack()
+//        requireActivity().supportFragmentManager.beginTransaction()
+//            .replace(R.id.container, fragment)
+//            .addToBackStack(null)
+//            .commit()
+//    }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -99,7 +104,8 @@ class AuthFragment : Fragment() {
     }
 
     private fun routeSuccess() {
-        launchFragment(RepositoriesListFragment.getInstance())
+        launchFragment()
+//        launchFragment(RepositoriesListFragment.getInstance())
     }
 
     private fun setListeners() {

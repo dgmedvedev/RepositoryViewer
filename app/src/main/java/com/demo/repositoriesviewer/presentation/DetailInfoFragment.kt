@@ -167,7 +167,7 @@ class DetailInfoFragment : Fragment() {
         private const val HTTP_403_ERROR = "HTTP 403 "
         private const val HTTP_404_ERROR = "HTTP 404 "
         private const val HTTP_422_ERROR = "HTTP 422 "
-        private const val REPO_ID = "REPO_ID"
+        const val REPO_ID = "REPO_ID"
 
         fun getInstance(repoId: String): DetailInfoFragment {
             return DetailInfoFragment().apply {
