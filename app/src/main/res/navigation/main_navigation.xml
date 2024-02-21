@@ -9,7 +9,7 @@
         android:id="@+id/authFragment"
         android:name="com.demo.repositoriesviewer.presentation.AuthFragment"
         android:label="fragment_auth"
-        tools:layout="@layout/fragment_auth" >
+        tools:layout="@layout/fragment_auth">
         <action
             android:id="@+id/action_authFragment_to_repositoriesListFragment"
             app:destination="@id/repositoriesListFragment" />
@@ -17,7 +17,8 @@
     <fragment
         android:id="@+id/repositoriesListFragment"
         android:name="com.demo.repositoriesviewer.presentation.RepositoriesListFragment"
-        android:label="RepositoriesListFragment" >
+        android:label="RepositoriesListFragment"
+        tools:layout="@layout/fragment_repositories_list">
         <action
             android:id="@+id/action_repositoriesListFragment_to_detailInfoFragment"
             app:destination="@id/detailInfoFragment" />
@@ -25,5 +26,10 @@
     <fragment
         android:id="@+id/detailInfoFragment"
         android:name="com.demo.repositoriesviewer.presentation.DetailInfoFragment"
-        android:label="DetailInfoFragment" />
+        android:label="DetailInfoFragment"
+        tools:layout="@layout/fragment_detail_info">
+        <argument
+            android:name="repoId"
+            app:argType="string" />
+    </fragment>
 </navigation>

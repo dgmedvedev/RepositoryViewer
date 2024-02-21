@@ -74,21 +74,12 @@ class RepositoriesListFragment : Fragment() {
     }
 
     private fun launchFragment(repoId: String) {
-        val args = Bundle().apply {
-            putString(DetailInfoFragment.REPO_ID, repoId)
-        }
         findNavController().navigate(
-            R.id.action_repositoriesListFragment_to_detailInfoFragment,
-            args
+            RepositoriesListFragmentDirections.actionRepositoriesListFragmentToDetailInfoFragment(
+                repoId
+            )
         )
     }
-
-//    private fun launchFragment(fragment: Fragment) {
-//        requireActivity().supportFragmentManager.beginTransaction()
-//            .replace(R.id.container, fragment)
-//            .addToBackStack(null)
-//            .commit()
-//    }
 
     private fun observeViewModel() {
         repositoriesListViewModel.state.observe(viewLifecycleOwner) { state ->
@@ -118,7 +109,6 @@ class RepositoriesListFragment : Fragment() {
                 val isInternetAvailable = deferredInternetAvailable.await()
                 if (isInternetAvailable) {
                     launchFragment(it.id)
-//                    launchFragment(DetailInfoFragment.getInstance(it.id))
                 } else {
                     showToast(getString(R.string.internet_access_error))
                 }
@@ -150,9 +140,5 @@ class RepositoriesListFragment : Fragment() {
         const val HTTP_403_ERROR = "HTTP 403 "
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
-
-        fun getInstance(): RepositoriesListFragment {
-            return RepositoriesListFragment()
-        }
     }
 }

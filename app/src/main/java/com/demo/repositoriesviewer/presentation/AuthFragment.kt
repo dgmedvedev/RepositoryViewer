@@ -64,14 +64,6 @@ class AuthFragment : Fragment() {
         findNavController().navigate(R.id.action_authFragment_to_repositoriesListFragment)
     }
 
-//    private fun launchFragment(fragment: Fragment) {
-//        requireActivity().supportFragmentManager.popBackStack()
-//        requireActivity().supportFragmentManager.beginTransaction()
-//            .replace(R.id.container, fragment)
-//            .addToBackStack(null)
-//            .commit()
-//    }
-
     private fun observeViewModel() {
         lifecycleScope.launch {
             authViewModel.actions.collect { action ->
@@ -105,7 +97,6 @@ class AuthFragment : Fragment() {
 
     private fun routeSuccess() {
         launchFragment()
-//        launchFragment(RepositoriesListFragment.getInstance())
     }
 
     private fun setListeners() {
