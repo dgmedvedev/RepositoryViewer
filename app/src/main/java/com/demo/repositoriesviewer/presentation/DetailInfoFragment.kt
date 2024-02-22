@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
 
 class DetailInfoFragment : Fragment() {
+
+    private val args by navArgs<DetailInfoFragmentArgs>()
 
     private var _binding: FragmentDetailInfoBinding? = null
     private val binding: FragmentDetailInfoBinding
@@ -20,13 +23,11 @@ class DetailInfoFragment : Fragment() {
 
     private lateinit var repositoryInfoViewModel: RepositoryInfoViewModel
 
-    private var repoId: String? = null
     private var toastMessage: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         repositoryInfoViewModel = ViewModelProvider(this)[RepositoryInfoViewModel::class.java]
-        parseParams()
     }
 
     override fun onCreateView(
@@ -41,9 +42,7 @@ class DetailInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        repoId?.let {
-            repositoryInfoViewModel.loadData(it)
-        }
+        repositoryInfoViewModel.loadData(args.repoId)
         observeViewModel()
         setListeners()
     }
@@ -94,10 +93,6 @@ class DetailInfoFragment : Fragment() {
     private fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
-    }
-
-    private fun parseParams() {
-        repoId = requireArguments().getString(REPO_ID)
     }
 
     private fun setListeners() {
@@ -167,14 +162,5 @@ class DetailInfoFragment : Fragment() {
         private const val HTTP_403_ERROR = "HTTP 403 "
         private const val HTTP_404_ERROR = "HTTP 404 "
         private const val HTTP_422_ERROR = "HTTP 422 "
-        private const val REPO_ID = "REPO_ID"
-
-        fun getInstance(repoId: String): DetailInfoFragment {
-            return DetailInfoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(REPO_ID, repoId)
-                }
-            }
-        }
     }
 }

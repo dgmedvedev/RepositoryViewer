@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
@@ -72,11 +73,12 @@ class RepositoriesListFragment : Fragment() {
         _binding = null
     }
 
-    private fun launchFragment(fragment: Fragment) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
+    private fun launchFragment(repoId: String) {
+        findNavController().navigate(
+            RepositoriesListFragmentDirections.actionRepositoriesListFragmentToDetailInfoFragment(
+                repoId
+            )
+        )
     }
 
     private fun observeViewModel() {
@@ -106,7 +108,7 @@ class RepositoriesListFragment : Fragment() {
             lifecycleScope.launch {
                 val isInternetAvailable = deferredInternetAvailable.await()
                 if (isInternetAvailable) {
-                    launchFragment(DetailInfoFragment.getInstance(it.id))
+                    launchFragment(it.id)
                 } else {
                     showToast(getString(R.string.internet_access_error))
                 }
@@ -138,9 +140,5 @@ class RepositoriesListFragment : Fragment() {
         const val HTTP_403_ERROR = "HTTP 403 "
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
-
-        fun getInstance(): RepositoriesListFragment {
-            return RepositoriesListFragment()
-        }
     }
 }
