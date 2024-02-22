@@ -15,6 +15,6 @@ Dmitry Medvedev
 * Jetpack Navigation
 
 ## Contact information
-https://www.linkedin.com/in/dg-medvedev
-https://t.me/dgmedvedev
-dgmedvedev.it@gmail.com
+* https://www.linkedin.com/in/dg-medvedev
+* https://t.me/dgmedvedev
+* dgmedvedev.it@gmail.com
