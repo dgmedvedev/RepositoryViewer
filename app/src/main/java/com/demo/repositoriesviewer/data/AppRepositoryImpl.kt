@@ -11,9 +11,7 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-object AppRepositoryImpl : AppRepository {
-
-    val keyValueStorage = KeyValueStorage()
+class AppRepositoryImpl(private val keyValueStorage : KeyValueStorage) : AppRepository {
 
     lateinit var userName: String
 

@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
@@ -19,16 +19,12 @@ class AuthFragment : Fragment() {
 
     private var _binding: FragmentAuthBinding? = null
     private val binding: FragmentAuthBinding
-        get() = _binding ?: throw java.lang.RuntimeException("FragmentAuthBinding == null")
+        get() = _binding
+            ?: throw java.lang.RuntimeException("FragmentAuthBinding == null")
 
-    private lateinit var authViewModel: AuthViewModel
+    private val authViewModel: AuthViewModel by viewModels()
 
     private var toastMessage: Toast? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,7 +99,7 @@ class AuthFragment : Fragment() {
         with(binding) {
             signButton.setOnClickListener {
                 val newToken: String = etAuthorization.text.toString()
-                authViewModel.repository.keyValueStorage.authToken = newToken
+//                authViewModel.repository.keyValueStorage.authToken = newToken
                 authViewModel.onSignButtonPressed()
             }
             etAuthorization.addTextChangedListener {

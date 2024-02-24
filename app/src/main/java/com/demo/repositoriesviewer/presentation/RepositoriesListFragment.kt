@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
@@ -24,18 +24,12 @@ class RepositoriesListFragment : Fragment() {
         get() = _binding
             ?: throw java.lang.RuntimeException("FragmentRepositoriesListBinding == null")
 
-    private lateinit var repositoriesListViewModel: RepositoriesListViewModel
+    private val repositoriesListViewModel: RepositoriesListViewModel by viewModels()
 
     private var toastMessage: Toast? = null
 
     private val repoListAdapter by lazy {
         RepoListAdapter(requireContext())
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        repositoriesListViewModel =
-            ViewModelProvider(this)[RepositoriesListViewModel::class.java]
     }
 
     override fun onCreateView(

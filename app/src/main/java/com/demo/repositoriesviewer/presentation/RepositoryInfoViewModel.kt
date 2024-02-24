@@ -5,23 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
 import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import javax.inject.Inject
 
-class RepositoryInfoViewModel : ViewModel() {
-
-    val repository: AppRepositoryImpl = AppRepositoryImpl
-
-    private val getRepositoryUseCase = GetRepositoryUseCase(repository)
-    private val getRepositoryReadmeUseCase = GetRepositoryReadmeUseCase(repository)
+@HiltViewModel
+class RepositoryInfoViewModel @Inject constructor(
+    private val getRepositoryUseCase: GetRepositoryUseCase,
+    private val getRepositoryReadmeUseCase: GetRepositoryReadmeUseCase
+) : ViewModel() {
 
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>

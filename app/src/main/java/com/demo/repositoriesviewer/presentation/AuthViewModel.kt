@@ -7,8 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
-import com.demo.repositoriesviewer.data.AppRepositoryImpl
+import com.demo.repositoriesviewer.data.KeyValueStorage
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -18,12 +20,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
-
-    val repository: AppRepositoryImpl = AppRepositoryImpl
-
-    private val signInUseCase = SignInUseCase(repository)
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    @ApplicationContext application: Application,
+    private val signInUseCase: SignInUseCase,
+    private val keyValueStorage: KeyValueStorage
+) : AndroidViewModel(application) {
 
     val token = MutableLiveData<String>()
     private val _state = MutableLiveData<State>()
@@ -44,7 +48,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             if (isInternetAvailable()) {
                 _state.value = State.Loading
-                val enteredToken = repository.keyValueStorage.authToken ?: VALUE_IS_EMPTY
+                val enteredToken = keyValueStorage.authToken ?: VALUE_IS_EMPTY
                 if (tokenIsValid(enteredToken)) {
                     try {
                         signInUseCase(enteredToken)
