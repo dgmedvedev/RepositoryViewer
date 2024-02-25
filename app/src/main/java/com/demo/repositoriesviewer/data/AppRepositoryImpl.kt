@@ -1,7 +1,7 @@
 package com.demo.repositoriesviewer.data
 
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
-import com.demo.repositoriesviewer.data.network.ApiFactory
+import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.storage.TokenStorage
 import com.demo.repositoriesviewer.domain.entities.KeyValue
 import com.demo.repositoriesviewer.domain.entities.Repo
@@ -14,14 +14,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class AppRepositoryImpl(
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val apiService: ApiService,
+    private val mapper: RepoMapper
 ) :
     AppRepository {
 
     lateinit var userName: String
-
-    private val apiService = ApiFactory.apiService
-    private val mapper = RepoMapper()
 
     override fun getToken(): KeyValue {
         return mapper.keyValueStorageToKeyValue(tokenStorage.get())
