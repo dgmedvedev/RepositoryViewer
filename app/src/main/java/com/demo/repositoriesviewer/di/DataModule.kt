@@ -1,12 +1,10 @@
 package com.demo.repositoriesviewer.di
 
-import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import com.demo.repositoriesviewer.data.AppRepositoryImpl
-import com.demo.repositoriesviewer.data.KeyValueStorage
+import com.demo.repositoriesviewer.data.storage.SharedPrefTokenStorage
+import com.demo.repositoriesviewer.data.storage.TokenStorage
 import com.demo.repositoriesviewer.domain.repository.AppRepository
-import com.demo.repositoriesviewer.presentation.AuthViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,22 +16,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class DataModule {
 
-    fun provideSharedPreferences(@ApplicationContext application: Application): SharedPreferences {
-        return application.getSharedPreferences(
-            AuthViewModel.NAME_SHARED_PREFERENCE,
-            Context.MODE_PRIVATE
-        )
+    @Provides
+    @Singleton
+    fun provideTokenStorage(@ApplicationContext context: Context): TokenStorage {
+        return SharedPrefTokenStorage(context = context)
     }
 
     @Provides
     @Singleton
-    fun provideKeyValueStorage(): KeyValueStorage {
-        return KeyValueStorage()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAppRepository(keyValueStorage: KeyValueStorage): AppRepository {
-        return AppRepositoryImpl(keyValueStorage = keyValueStorage)
+    fun provideAppRepository(tokenStorage: TokenStorage): AppRepository {
+        return AppRepositoryImpl(tokenStorage = tokenStorage)
     }
 }

@@ -13,8 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentAuthBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class AuthFragment : Fragment() {
 
     private var _binding: FragmentAuthBinding? = null
@@ -99,7 +101,7 @@ class AuthFragment : Fragment() {
         with(binding) {
             signButton.setOnClickListener {
                 val newToken: String = etAuthorization.text.toString()
-//                authViewModel.repository.keyValueStorage.authToken = newToken
+                authViewModel.saveToken(newToken)
                 authViewModel.onSignButtonPressed()
             }
             etAuthorization.addTextChangedListener {

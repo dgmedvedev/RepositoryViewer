@@ -1,13 +1,19 @@
 package com.demo.repositoriesviewer.data.mapper
 
-import com.demo.repositoriesviewer.data.network.model.OwnerDto
-import com.demo.repositoriesviewer.data.network.model.RepoDto
-import com.demo.repositoriesviewer.domain.entities.License
-import com.demo.repositoriesviewer.domain.entities.Repo
-import com.demo.repositoriesviewer.domain.entities.RepoDetails
-import com.demo.repositoriesviewer.domain.entities.UserInfo
+import com.demo.repositoriesviewer.data.network.models.OwnerDto
+import com.demo.repositoriesviewer.data.network.models.RepoDto
+import com.demo.repositoriesviewer.data.storage.models.KeyValueStorage
+import com.demo.repositoriesviewer.domain.entities.*
 
 class RepoMapper {
+
+    fun keyValueToKeyValueStorage(keyValue: KeyValue): KeyValueStorage = KeyValueStorage(
+        authToken = keyValue.authToken
+    )
+
+    fun keyValueStorageToKeyValue(keyValueStorage: KeyValueStorage): KeyValue = KeyValue(
+        authToken = keyValueStorage.authToken
+    )
 
     fun mapListReposDtoToListRepos(listReposDto: List<RepoDto>): List<Repo> {
         return listReposDto.map { repoDtoToRepo(it) }

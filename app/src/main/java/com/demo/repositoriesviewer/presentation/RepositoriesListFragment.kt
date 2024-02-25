@@ -12,11 +12,13 @@ import androidx.navigation.fragment.findNavController
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
 
     private var _binding: FragmentRepositoriesListBinding? = null

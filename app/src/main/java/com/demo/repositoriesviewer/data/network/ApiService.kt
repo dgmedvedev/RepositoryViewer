@@ -1,8 +1,8 @@
 package com.demo.repositoriesviewer.data.network
 
-import com.demo.repositoriesviewer.data.network.model.OwnerDto
-import com.demo.repositoriesviewer.data.network.model.RepoDto
-import com.demo.repositoriesviewer.data.network.model.Watcher
+import com.demo.repositoriesviewer.data.network.models.OwnerDto
+import com.demo.repositoriesviewer.data.network.models.RepoDto
+import com.demo.repositoriesviewer.data.network.models.Watcher
 import com.google.gson.JsonObject
 import retrofit2.http.*
 

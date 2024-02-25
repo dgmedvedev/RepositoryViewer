@@ -1,10 +1,7 @@
 package com.demo.repositoriesviewer.di
 
 import com.demo.repositoriesviewer.domain.repository.AppRepository
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
-import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
+import com.demo.repositoriesviewer.domain.usecases.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +22,14 @@ class DomainModule {
     @Provides
     fun provideGetRepositoryUseCase(appRepository: AppRepository): GetRepositoryUseCase =
         GetRepositoryUseCase(appRepository = appRepository)
+
+    @Provides
+    fun provideGetTokenUseCase(appRepository: AppRepository): GetTokenUseCase =
+        GetTokenUseCase(appRepository = appRepository)
+
+    @Provides
+    fun provideSaveTokenUseCase(appRepository: AppRepository): SaveTokenUseCase =
+        SaveTokenUseCase(appRepository = appRepository)
 
     @Provides
     fun provideSignInUseCase(appRepository: AppRepository): SignInUseCase =

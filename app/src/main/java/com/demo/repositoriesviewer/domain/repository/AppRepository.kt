@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.domain.repository
 
+import com.demo.repositoriesviewer.domain.entities.KeyValue
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
@@ -17,4 +18,8 @@ interface AppRepository {
     ): String
 
     suspend fun signIn(token: String): UserInfo
+
+    fun getToken(): KeyValue
+
+    fun saveToken(keyValue: KeyValue)
 }
