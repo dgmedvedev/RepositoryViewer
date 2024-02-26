@@ -1,7 +1,9 @@
 package com.demo.repositoriesviewer.data
 
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
-import com.demo.repositoriesviewer.data.network.ApiFactory
+import com.demo.repositoriesviewer.data.network.ApiService
+import com.demo.repositoriesviewer.data.storage.TokenStorage
+import com.demo.repositoriesviewer.domain.entities.KeyValue
 import com.demo.repositoriesviewer.domain.entities.Repo
 import com.demo.repositoriesviewer.domain.entities.RepoDetails
 import com.demo.repositoriesviewer.domain.entities.UserInfo
@@ -11,18 +13,27 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-object AppRepositoryImpl : AppRepository {
-
-    val keyValueStorage = KeyValueStorage()
+class AppRepositoryImpl(
+    private val tokenStorage: TokenStorage,
+    private val apiService: ApiService,
+    private val mapper: RepoMapper
+) :
+    AppRepository {
 
     lateinit var userName: String
 
-    private val apiService = ApiFactory.apiService
-    private val mapper = RepoMapper()
+    override fun getToken(): KeyValue {
+        return mapper.keyValueStorageToKeyValue(tokenStorage.get())
+    }
+
+    override fun saveToken(keyValue: KeyValue) {
+        val keyValueStorage = mapper.keyValueToKeyValueStorage(keyValue)
+        tokenStorage.save(keyValueStorage = keyValueStorage)
+    }
 
     override suspend fun getRepositories(): List<Repo> {
         val fullListReposDto = apiService.getListRepos(userName = userName)
-        return mapper.mapListReposDtoToListRepos(fullListReposDto)
+        return mapper.mapListReposDtoToListRepos(listReposDto = fullListReposDto)
     }
 
     override suspend fun getRepository(repoId: String): RepoDetails {
@@ -30,7 +41,7 @@ object AppRepositoryImpl : AppRepository {
         var repoDetails: RepoDetails? = null
         for (repo in listRepos) {
             if (repo.id == repoId) {
-                setWatchers(repo)
+                setWatchers(repo = repo)
                 repoDetails = repo.repoDetails
             }
         }
@@ -58,7 +69,8 @@ object AppRepositoryImpl : AppRepository {
         val authorizationHeader = " token $token"
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
-        keyValueStorage.authToken = token
+        val keyValue = KeyValue(token)
+        saveToken(keyValue)
         return mapper.ownerDtoToUserInfo(ownerDto)
     }
 

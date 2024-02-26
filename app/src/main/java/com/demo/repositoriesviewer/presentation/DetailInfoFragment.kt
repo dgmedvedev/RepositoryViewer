@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailInfoFragment : Fragment() {
 
     private val args by navArgs<DetailInfoFragmentArgs>()
@@ -21,14 +23,9 @@ class DetailInfoFragment : Fragment() {
     private val binding: FragmentDetailInfoBinding
         get() = _binding ?: throw java.lang.RuntimeException("FragmentDetailInfoBinding == null")
 
-    private lateinit var repositoryInfoViewModel: RepositoryInfoViewModel
+    private val repositoryInfoViewModel: RepositoryInfoViewModel by viewModels()
 
     private var toastMessage: Toast? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        repositoryInfoViewModel = ViewModelProvider(this)[RepositoryInfoViewModel::class.java]
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
