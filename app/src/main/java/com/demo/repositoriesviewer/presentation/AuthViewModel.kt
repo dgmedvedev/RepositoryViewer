@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.domain.entities.KeyValue
 import com.demo.repositoriesviewer.domain.usecases.GetTokenUseCase
 import com.demo.repositoriesviewer.domain.usecases.SaveTokenUseCase
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
@@ -40,7 +39,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun saveToken(newToken: String?) {
-        val keyValue = KeyValue(authToken = newToken)
+        val keyValue = com.demo.repositoriesviewer.domain.entities.KeyValue(authToken = newToken)
         saveTokenUseCase(keyValue = keyValue)
     }
 
@@ -55,7 +54,8 @@ class AuthViewModel @Inject constructor(
                         signInUseCase(enteredToken)
                         delay(500)
                         token.value = enteredToken
-                        val updateKeyValueStorage = KeyValue(enteredToken)
+                        val updateKeyValueStorage =
+                            com.demo.repositoriesviewer.domain.entities.KeyValue(enteredToken)
                         saveTokenUseCase(updateKeyValueStorage)
                         _actions.send(Action.RouteToMain)
                     } catch (e: RuntimeException) {
