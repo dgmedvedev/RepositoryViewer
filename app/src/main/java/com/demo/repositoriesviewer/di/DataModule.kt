@@ -1,12 +1,12 @@
 package com.demo.repositoriesviewer.di
 
 import android.content.Context
-import com.demo.repositoriesviewer.data.AppRepositoryImpl
-import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.data.network.ApiService
-import com.demo.repositoriesviewer.data.storage.SharedPrefTokenStorage
+import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.storage.TokenStorage
+import com.demo.repositoriesviewer.data.storage.SharedPrefTokenStorage
+import com.demo.repositoriesviewer.data.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.Module
 import dagger.Provides
