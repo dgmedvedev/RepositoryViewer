@@ -19,7 +19,7 @@ interface AppRepository {
 
     suspend fun signIn(token: String): UserInfo
 
-    fun getToken(): KeyValue
+    fun getKeyValue(): KeyValue
 
-    fun saveToken(keyValue: KeyValue)
+    fun saveKeyValue(keyValue: KeyValue)
 }

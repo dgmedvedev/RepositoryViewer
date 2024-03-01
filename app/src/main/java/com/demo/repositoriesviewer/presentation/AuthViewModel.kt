@@ -1,16 +1,17 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.domain.usecases.GetTokenUseCase
-import com.demo.repositoriesviewer.domain.usecases.SaveTokenUseCase
+import com.demo.repositoriesviewer.domain.usecases.GetKeyValueStorageUseCase
+import com.demo.repositoriesviewer.domain.usecases.SaveKeyValueStorageUseCase
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
+import com.demo.repositoriesviewer.domain.entities.KeyValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -21,12 +22,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val getTokenUseCase: GetTokenUseCase,
-    private val saveTokenUseCase: SaveTokenUseCase,
+    private val getKeyValueStorageUseCase: GetKeyValueStorageUseCase,
+    private val saveKeyValueStorageUseCase: SaveKeyValueStorageUseCase,
     private val signInUseCase: SignInUseCase
 ) : ViewModel() {
 
-    val token = MutableLiveData<String>()
+    private val _token = MutableLiveData<String>()
+    val token: LiveData<String>
+        get() = _token
+
     private val _state = MutableLiveData<State>()
     val state: LiveData<State>
         get() = _state
@@ -34,29 +38,32 @@ class AuthViewModel @Inject constructor(
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
-    fun getToken(): String? {
-        return getTokenUseCase().authToken
+    fun loadData() {
+        val keyValueStorage = getKeyValueStorageUseCase()
+        Log.d("TEST_APP", "KeyValueStorage1: $keyValueStorage")
+        _token.value = keyValueStorage.authToken
     }
 
     fun saveToken(newToken: String?) {
-        val keyValue = com.demo.repositoriesviewer.domain.entities.KeyValue(authToken = newToken)
-        saveTokenUseCase(keyValue = keyValue)
+        val keyValue = KeyValue(authToken = newToken)
+        saveKeyValueStorageUseCase(keyValue = keyValue)
     }
 
     fun onSignButtonPressed() {
         viewModelScope.launch {
             if (isInternetAvailable()) {
                 _state.value = State.Loading
-                val keyValueStorage = getTokenUseCase()
+                val keyValueStorage = getKeyValueStorageUseCase()
+                Log.d("TEST_APP", "KeyValueStorage2: $keyValueStorage")
                 val enteredToken = keyValueStorage.authToken ?: VALUE_IS_EMPTY
                 if (tokenIsValid(enteredToken)) {
                     try {
                         signInUseCase(enteredToken)
-                        delay(500)
-                        token.value = enteredToken
+                        _token.value = enteredToken
+                        Log.d("TEST_APP", "enteredToken VM: $enteredToken")
                         val updateKeyValueStorage =
-                            com.demo.repositoriesviewer.domain.entities.KeyValue(enteredToken)
-                        saveTokenUseCase(updateKeyValueStorage)
+                            KeyValue(enteredToken)
+                        saveKeyValueStorageUseCase(updateKeyValueStorage)
                         _actions.send(Action.RouteToMain)
                     } catch (e: RuntimeException) {
                         _actions.send(Action.ShowError(e.message.toString()))

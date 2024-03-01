@@ -1,6 +1,7 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,9 +40,8 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val token = authViewModel.getToken()
-        binding.etAuthorization.setText(token)
 
+        authViewModel.loadData()
         observeViewModel()
         setListeners()
     }
@@ -63,6 +63,11 @@ class AuthFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        authViewModel.token.observe(viewLifecycleOwner) { token ->
+            Log.d("TEST_APP", "enteredToken Fragment: $token")
+            binding.etAuthorization.setText(token)
+        }
+
         lifecycleScope.launch {
             authViewModel.actions.collect { action ->
                 handleAction(action)
@@ -86,10 +91,6 @@ class AuthFragment : Fragment() {
             } else {
                 null
             }
-        }
-
-        authViewModel.token.observe(viewLifecycleOwner) {
-            //TODO()
         }
     }
 

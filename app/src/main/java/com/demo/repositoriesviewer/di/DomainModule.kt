@@ -24,12 +24,12 @@ class DomainModule {
         GetRepositoryUseCase(appRepository = appRepository)
 
     @Provides
-    fun provideGetTokenUseCase(appRepository: AppRepository): GetTokenUseCase =
-        GetTokenUseCase(appRepository = appRepository)
+    fun provideGetKeyValueStorageUseCase(appRepository: AppRepository): GetKeyValueStorageUseCase =
+        GetKeyValueStorageUseCase(appRepository = appRepository)
 
     @Provides
-    fun provideSaveTokenUseCase(appRepository: AppRepository): SaveTokenUseCase =
-        SaveTokenUseCase(appRepository = appRepository)
+    fun provideSaveTokenUseCase(appRepository: AppRepository): SaveKeyValueStorageUseCase =
+        SaveKeyValueStorageUseCase(appRepository = appRepository)
 
     @Provides
     fun provideSignInUseCase(appRepository: AppRepository): SignInUseCase =
