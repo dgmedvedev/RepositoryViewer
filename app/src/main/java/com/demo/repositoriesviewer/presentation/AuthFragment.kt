@@ -1,7 +1,6 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,8 +39,6 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        authViewModel.loadData()
         observeViewModel()
         setListeners()
     }
@@ -51,27 +48,13 @@ class AuthFragment : Fragment() {
         _binding = null
     }
 
-    private fun handleAction(action: AuthViewModel.Action) {
-        when (action) {
-            AuthViewModel.Action.RouteToMain -> routeSuccess()
-            is AuthViewModel.Action.ShowError -> showError(action.message)
-        }
-    }
-
     private fun launchFragment() {
         findNavController().navigate(R.id.action_authFragment_to_repositoriesListFragment)
     }
 
     private fun observeViewModel() {
         authViewModel.token.observe(viewLifecycleOwner) { token ->
-            Log.d("TEST_APP", "enteredToken Fragment: $token")
             binding.etAuthorization.setText(token)
-        }
-
-        lifecycleScope.launch {
-            authViewModel.actions.collect { action ->
-                handleAction(action)
-            }
         }
 
         authViewModel.state.observe(viewLifecycleOwner) { state ->
@@ -82,28 +65,27 @@ class AuthFragment : Fragment() {
             }
             binding.signButton.setTextColor(color)
             binding.signButton.isEnabled = state != AuthViewModel.State.Loading
-
             binding.progressBar.visibility =
-                if (state == AuthViewModel.State.Loading) View.VISIBLE else View.GONE
+                if (state is AuthViewModel.State.Loading) View.VISIBLE else View.GONE
+            binding.tilAuthorization.error =
+                if (state is AuthViewModel.State.InvalidInput) state.reason else null
+        }
 
-            binding.tilAuthorization.error = if (state is AuthViewModel.State.InvalidInput) {
-                state.reason
-            } else {
-                null
+        lifecycleScope.launch {
+            authViewModel.actions.collect { action ->
+                when (action) {
+                    is AuthViewModel.Action.RouteToMain -> launchFragment()
+                    is AuthViewModel.Action.ShowError -> showError(error = action.message)
+                }
             }
         }
-    }
-
-    private fun routeSuccess() {
-        launchFragment()
     }
 
     private fun setListeners() {
         with(binding) {
             signButton.setOnClickListener {
-                val newToken: String = etAuthorization.text.toString()
-                authViewModel.saveToken(newToken)
-                authViewModel.onSignButtonPressed()
+                val token: String = etAuthorization.text.toString()
+                authViewModel.onSignButtonPressed(token = token)
             }
             etAuthorization.addTextChangedListener {
                 tilAuthorization.error = null
@@ -112,14 +94,19 @@ class AuthFragment : Fragment() {
     }
 
     private fun showError(error: String) {
-        val message = when (error) {
-            HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-            HTTP_403_ERROR -> getString(R.string.forbidden_error)
-            HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-            HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-            else -> getString(R.string.unknown_error)
+        with(AuthViewModel){
+            val message = when (error) {
+                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
+                HTTP_403_ERROR -> getString(R.string.forbidden_error)
+                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
+                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
+                INTERNET_ACCESS_ERROR -> getString(R.string.internet_access_error)
+                VALUE_INVALID -> getString(R.string.value_invalid)
+                VALUE_NOT_ENTERED -> getString(R.string.value_not_entered)
+                else -> String.format(getString(R.string.unknown_error), error)
+            }
+            showToast(message)
         }
-        showToast("$message ($error)")
     }
 
     private fun showToast(message: String) {
@@ -128,12 +115,5 @@ class AuthFragment : Fragment() {
         }
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
-    }
-
-    companion object {
-        const val HTTP_401_ERROR = "HTTP 401 "
-        const val HTTP_403_ERROR = "HTTP 403 "
-        const val HTTP_404_ERROR = "HTTP 404 "
-        const val HTTP_422_ERROR = "HTTP 422 "
     }
 }

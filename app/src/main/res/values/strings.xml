@@ -22,6 +22,6 @@
     <string name="internet_access_error">Check your internet connection</string>
     <string name="requires_authentication_error">Requires authentication</string>
     <string name="resource_not_found_error">Resource not found</string>
-    <string name="unknown_error">Error</string>
+    <string name="unknown_error">Unknown error: %s</string>
     <string name="validation_failed_error">Validation failed, or the endpoint has been spammed</string>
 </resources>

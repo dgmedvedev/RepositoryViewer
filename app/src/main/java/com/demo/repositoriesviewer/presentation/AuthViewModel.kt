@@ -1,14 +1,13 @@
 package com.demo.repositoriesviewer.presentation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.demo.repositoriesviewer.domain.entities.KeyValue
 import com.demo.repositoriesviewer.domain.usecases.GetKeyValueStorageUseCase
 import com.demo.repositoriesviewer.domain.usecases.SaveKeyValueStorageUseCase
 import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
-import com.demo.repositoriesviewer.domain.entities.KeyValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -22,47 +21,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val getKeyValueStorageUseCase: GetKeyValueStorageUseCase,
+    getKeyValueStorageUseCase: GetKeyValueStorageUseCase,
     private val saveKeyValueStorageUseCase: SaveKeyValueStorageUseCase,
     private val signInUseCase: SignInUseCase
 ) : ViewModel() {
 
     private val _token = MutableLiveData<String>()
-    val token: LiveData<String>
-        get() = _token
+    val token: LiveData<String> = _token
 
     private val _state = MutableLiveData<State>()
-    val state: LiveData<State>
-        get() = _state
+    val state: LiveData<State> = _state
 
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
-    fun loadData() {
+    init {
         val keyValueStorage = getKeyValueStorageUseCase()
-        Log.d("TEST_APP", "KeyValueStorage1: $keyValueStorage")
         _token.value = keyValueStorage.authToken
     }
 
-    fun saveToken(newToken: String?) {
-        val keyValue = KeyValue(authToken = newToken)
-        saveKeyValueStorageUseCase(keyValue = keyValue)
-    }
-
-    fun onSignButtonPressed() {
+    fun onSignButtonPressed(token: String) {
         viewModelScope.launch {
             if (isInternetAvailable()) {
                 _state.value = State.Loading
-                val keyValueStorage = getKeyValueStorageUseCase()
-                Log.d("TEST_APP", "KeyValueStorage2: $keyValueStorage")
-                val enteredToken = keyValueStorage.authToken ?: VALUE_IS_EMPTY
-                if (tokenIsValid(enteredToken)) {
+                if (tokenIsValid(token)) {
                     try {
-                        signInUseCase(enteredToken)
-                        _token.value = enteredToken
-                        Log.d("TEST_APP", "enteredToken VM: $enteredToken")
-                        val updateKeyValueStorage =
-                            KeyValue(enteredToken)
+                        signInUseCase(token)
+                        _token.value = token
+                        val updateKeyValueStorage = KeyValue(token)
                         saveKeyValueStorageUseCase(updateKeyValueStorage)
                         _actions.send(Action.RouteToMain)
                     } catch (e: RuntimeException) {
@@ -71,12 +57,7 @@ class AuthViewModel @Inject constructor(
                     _state.value = State.Idle
                 }
             } else {
-                _actions.send(
-                    Action.ShowError(
-                        "Check your internet connection"
-//                        getApplication<Application>().getString(R.string.internet_access_error)
-                    )
-                )
+                _actions.send(Action.ShowError(INTERNET_ACCESS_ERROR))
             }
         }
     }
@@ -94,28 +75,27 @@ class AuthViewModel @Inject constructor(
 
     private fun tokenIsValid(newToken: String?): Boolean {
         if (newToken.isNullOrBlank()) {
-            _state.value = State.InvalidInput(
-                "Enter your personal access token"
-//                getApplication<Application>()
-//                    .getString(R.string.value_not_entered)
-            )
+            _state.value = State.InvalidInput(VALUE_NOT_ENTERED)
             return false
         }
         if (Pattern.matches(IN_CYRILLIC, newToken)) {
-            _state.value = State.InvalidInput(
-                "Invalid token"
-//                getApplication<Application>()
-//                    .getString(R.string.value_invalid)
-            )
+            _state.value = State.InvalidInput(VALUE_INVALID)
             return false
         }
         return true
     }
 
     companion object {
+        const val HTTP_401_ERROR = "HTTP 401 "
+        const val HTTP_403_ERROR = "HTTP 403 "
+        const val HTTP_404_ERROR = "HTTP 404 "
+        const val HTTP_422_ERROR = "HTTP 422 "
         const val AVAILABLE_ADDRESS = "api.github.com"
         const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
+        const val INTERNET_ACCESS_ERROR = "internet_access_error"
+        const val VALUE_INVALID = "value_invalid"
         const val VALUE_IS_EMPTY = ""
+        const val VALUE_NOT_ENTERED = "value_not_entered"
     }
 
     sealed interface State {
