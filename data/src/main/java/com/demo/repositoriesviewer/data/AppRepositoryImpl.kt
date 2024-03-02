@@ -22,11 +22,11 @@ class AppRepositoryImpl(
 
     lateinit var userName: String
 
-    override fun getToken(): KeyValue {
+    override fun getKeyValue(): KeyValue {
         return mapper.keyValueStorageToKeyValue(tokenStorage.get())
     }
 
-    override fun saveToken(keyValue: KeyValue) {
+    override fun saveKeyValue(keyValue: KeyValue) {
         val keyValueStorage = mapper.keyValueToKeyValueStorage(keyValue)
         tokenStorage.save(keyValueStorage = keyValueStorage)
     }
@@ -70,7 +70,7 @@ class AppRepositoryImpl(
         val ownerDto = apiService.getOwnerDto(authorizationHeader)
         userName = ownerDto.login
         val keyValue = KeyValue(token)
-        saveToken(keyValue)
+        saveKeyValue(keyValue)
         return mapper.ownerDtoToUserInfo(ownerDto)
     }
 
