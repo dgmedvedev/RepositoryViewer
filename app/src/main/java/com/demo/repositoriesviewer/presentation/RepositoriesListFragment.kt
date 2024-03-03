@@ -113,14 +113,16 @@ class RepositoriesListFragment : Fragment() {
     }
 
     private fun showError(error: String) {
-        val message = when (error) {
-            HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-            HTTP_403_ERROR -> getString(R.string.forbidden_error)
-            HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-            HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-            else -> getString(R.string.unknown_error)
+        with(RepositoriesListViewModel) {
+            val message = when (error) {
+                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
+                HTTP_403_ERROR -> getString(R.string.forbidden_error)
+                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
+                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
+                else -> String.format(getString(R.string.unknown_error), error)
+            }
+            showToast(message)
         }
-        showToast("$message ($error)")
     }
 
     private fun showToast(message: String) {
@@ -129,12 +131,5 @@ class RepositoriesListFragment : Fragment() {
         }
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
-    }
-
-    companion object {
-        const val HTTP_401_ERROR = "HTTP 401 "
-        const val HTTP_403_ERROR = "HTTP 403 "
-        const val HTTP_404_ERROR = "HTTP 404 "
-        const val HTTP_422_ERROR = "HTTP 422 "
     }
 }

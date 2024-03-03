@@ -58,6 +58,10 @@ class RepositoriesListViewModel @Inject constructor(
     }
 
     companion object {
+        const val HTTP_401_ERROR = "HTTP 401 "
+        const val HTTP_403_ERROR = "HTTP 403 "
+        const val HTTP_404_ERROR = "HTTP 404 "
+        const val HTTP_422_ERROR = "HTTP 422 "
         const val AVAILABLE_ADDRESS = "api.github.com"
         const val VALUE_IS_EMPTY = ""
     }
