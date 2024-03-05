@@ -126,9 +126,7 @@ class RepositoriesListFragment : Fragment() {
     }
 
     private fun showToast(message: String) {
-        if (toastMessage != null) {
-            toastMessage?.cancel()
-        }
+        toastMessage?.cancel()
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
     }
