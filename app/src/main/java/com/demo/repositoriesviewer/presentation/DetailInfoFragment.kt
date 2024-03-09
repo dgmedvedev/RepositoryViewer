@@ -100,14 +100,17 @@ class DetailInfoFragment : Fragment() {
     }
 
     private fun showError(error: String) {
-        val message = when (error) {
-            HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-            HTTP_403_ERROR -> getString(R.string.forbidden_error)
-            HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-            HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-            else -> getString(R.string.unknown_error)
+        with(RepositoryInfoViewModel) {
+            val message = when (error) {
+                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
+                HTTP_403_ERROR -> getString(R.string.forbidden_error)
+                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
+                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
+                OWNER_NAME_IS_NULL_OR_BLANK -> getString(R.string.owner_name_is_null_or_blank)
+                else -> getString(R.string.unknown_error)
+            }
+            showToast(message = message)
         }
-        showToast("$message ($error)")
     }
 
     private fun showToast(message: String) {
@@ -150,12 +153,5 @@ class DetailInfoFragment : Fragment() {
             tvWatchers.visibility = View.VISIBLE
             tvTitleWatchers.visibility = View.VISIBLE
         }
-    }
-
-    companion object {
-        private const val HTTP_401_ERROR = "HTTP 401 "
-        private const val HTTP_403_ERROR = "HTTP 403 "
-        private const val HTTP_404_ERROR = "HTTP 404 "
-        private const val HTTP_422_ERROR = "HTTP 422 "
     }
 }

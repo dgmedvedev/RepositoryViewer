@@ -105,7 +105,7 @@ class AuthFragment : Fragment() {
                 VALUE_NOT_ENTERED -> getString(R.string.value_not_entered)
                 else -> String.format(getString(R.string.unknown_error), error)
             }
-            showToast(message)
+            showToast(message = message)
         }
     }
 
