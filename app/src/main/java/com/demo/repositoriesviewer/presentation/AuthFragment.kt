@@ -68,7 +68,14 @@ class AuthFragment : Fragment() {
             binding.progressBar.visibility =
                 if (state is AuthViewModel.State.Loading) View.VISIBLE else View.GONE
             binding.tilAuthorization.error =
-                if (state is AuthViewModel.State.InvalidInput) state.reason else null
+                if (state is AuthViewModel.State.InvalidInput) {
+                    when (state.reason) {
+                        AuthViewModel.VALUE_INVALID -> getString(R.string.value_invalid)
+                        AuthViewModel.UNEXPECTED_CHAR -> getString(R.string.unexpected_char)
+                        AuthViewModel.VALUE_NOT_ENTERED -> getString(R.string.value_not_entered)
+                        else -> state.reason
+                    }
+                } else null
         }
 
         lifecycleScope.launch {
@@ -94,15 +101,13 @@ class AuthFragment : Fragment() {
     }
 
     private fun showError(error: String) {
-        with(AuthViewModel){
+        with(AuthViewModel) {
             val message = when (error) {
                 HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
                 HTTP_403_ERROR -> getString(R.string.forbidden_error)
                 HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
                 HTTP_422_ERROR -> getString(R.string.validation_failed_error)
                 INTERNET_ACCESS_ERROR -> getString(R.string.internet_access_error)
-                VALUE_INVALID -> getString(R.string.value_invalid)
-                VALUE_NOT_ENTERED -> getString(R.string.value_not_entered)
                 else -> String.format(getString(R.string.unknown_error), error)
             }
             showToast(message = message)

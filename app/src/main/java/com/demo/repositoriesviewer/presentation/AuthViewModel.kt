@@ -82,6 +82,10 @@ class AuthViewModel @Inject constructor(
             _state.value = State.InvalidInput(VALUE_INVALID)
             return false
         }
+        if (!Pattern.matches(NOT_CHAR, newToken)) {
+            _state.value = State.InvalidInput(UNEXPECTED_CHAR)
+            return false
+        }
         return true
     }
 
@@ -91,8 +95,10 @@ class AuthViewModel @Inject constructor(
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
         const val AVAILABLE_ADDRESS = "api.github.com"
+        const val NOT_CHAR = "^[a-zA-Z0-9_]*\$"
         const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
         const val INTERNET_ACCESS_ERROR = "internet_access_error"
+        const val UNEXPECTED_CHAR = "Unexpected char"
         const val VALUE_INVALID = "value_invalid"
         const val VALUE_IS_EMPTY = ""
         const val VALUE_NOT_ENTERED = "value_not_entered"

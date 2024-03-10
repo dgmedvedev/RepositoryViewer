@@ -71,13 +71,13 @@ class RepositoryInfoViewModel @Inject constructor(
         }
     }
 
-    private suspend fun downloadRepo(repoId: String) =
+    private suspend fun downloadRepo(repoId: String): Repo =
         withContext(Dispatchers.IO) {
             val repositoryDetails = getRepositoryUseCase(repoId)
             Repo(repoId, repositoryDetails)
         }
 
-    private fun rawReadmeToHtml(rawReadme: String) = run {
+    private fun rawReadmeToHtml(rawReadme: String): String = run {
         val flavour = CommonMarkFlavourDescriptor()
         val parsedTree =
             MarkdownParser(flavour).buildMarkdownTreeFromString(rawReadme)

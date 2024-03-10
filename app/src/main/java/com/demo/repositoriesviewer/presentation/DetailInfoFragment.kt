@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
@@ -52,6 +54,7 @@ class DetailInfoFragment : Fragment() {
     private fun observeViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
+                binding.repositoryName.text = state.githubRepo.repoDetails.name
                 binding.tvRepoUrl.text = state.githubRepo.repoDetails.url
                 binding.tvLicense.text =
                     state.githubRepo.repoDetails.license?.spdxId
@@ -92,10 +95,19 @@ class DetailInfoFragment : Fragment() {
         startActivity(intent)
     }
 
+    @SuppressLint("ResourceType")
     private fun setListeners() {
         binding.tvRepoUrl.setOnClickListener {
             val url = binding.tvRepoUrl.text.toString()
             openUrl(url)
+        }
+        binding.backStack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        binding.signOut.setOnClickListener {
+            findNavController().navigate(
+                DetailInfoFragmentDirections.actionDetailInfoFragmentToAuthFragment()
+            )
         }
     }
 
