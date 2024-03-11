@@ -110,6 +110,9 @@ class RepositoriesListFragment : Fragment() {
                 }
             }
         }
+        binding.signOut.setOnClickListener{
+            findNavController().popBackStack()
+        }
     }
 
     private fun showError(error: String) {
@@ -121,14 +124,12 @@ class RepositoriesListFragment : Fragment() {
                 HTTP_422_ERROR -> getString(R.string.validation_failed_error)
                 else -> String.format(getString(R.string.unknown_error), error)
             }
-            showToast(message)
+            showToast(message = message)
         }
     }
 
     private fun showToast(message: String) {
-        if (toastMessage != null) {
-            toastMessage?.cancel()
-        }
+        toastMessage?.cancel()
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
     }

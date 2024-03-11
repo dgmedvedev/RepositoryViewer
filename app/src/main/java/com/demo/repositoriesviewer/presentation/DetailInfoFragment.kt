@@ -1,5 +1,6 @@
 package com.demo.repositoriesviewer.presentation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
@@ -52,6 +54,7 @@ class DetailInfoFragment : Fragment() {
     private fun observeViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
+                binding.repositoryName.text = state.githubRepo.repoDetails.name
                 binding.tvRepoUrl.text = state.githubRepo.repoDetails.url
                 binding.tvLicense.text =
                     state.githubRepo.repoDetails.license?.spdxId
@@ -92,28 +95,38 @@ class DetailInfoFragment : Fragment() {
         startActivity(intent)
     }
 
+    @SuppressLint("ResourceType")
     private fun setListeners() {
         binding.tvRepoUrl.setOnClickListener {
             val url = binding.tvRepoUrl.text.toString()
             openUrl(url)
         }
+        binding.backStack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        binding.signOut.setOnClickListener {
+            findNavController().navigate(
+                DetailInfoFragmentDirections.actionDetailInfoFragmentToAuthFragment()
+            )
+        }
     }
 
     private fun showError(error: String) {
-        val message = when (error) {
-            HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-            HTTP_403_ERROR -> getString(R.string.forbidden_error)
-            HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-            HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-            else -> getString(R.string.unknown_error)
+        with(RepositoryInfoViewModel) {
+            val message = when (error) {
+                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
+                HTTP_403_ERROR -> getString(R.string.forbidden_error)
+                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
+                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
+                OWNER_NAME_IS_NULL_OR_BLANK -> getString(R.string.owner_name_is_null_or_blank)
+                else -> getString(R.string.unknown_error)
+            }
+            showToast(message = message)
         }
-        showToast("$message ($error)")
     }
 
     private fun showToast(message: String) {
-        if (toastMessage != null) {
-            toastMessage?.cancel()
-        }
+        toastMessage?.cancel()
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
     }
@@ -152,12 +165,5 @@ class DetailInfoFragment : Fragment() {
             tvWatchers.visibility = View.VISIBLE
             tvTitleWatchers.visibility = View.VISIBLE
         }
-    }
-
-    companion object {
-        private const val HTTP_401_ERROR = "HTTP 401 "
-        private const val HTTP_403_ERROR = "HTTP 403 "
-        private const val HTTP_404_ERROR = "HTTP 404 "
-        private const val HTTP_422_ERROR = "HTTP 422 "
     }
 }

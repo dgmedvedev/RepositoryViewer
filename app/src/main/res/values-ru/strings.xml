@@ -10,6 +10,7 @@
     <string name="list_is_empty">Список репозиториев пуст</string>
     <string name="logo">logo</string>
     <string name="readme_empty">Readme.md пуст</string>
+    <string name="repository_name">Имя репозитория</string>
     <string name="stars">stars</string>
     <string name="type_the_token">Личный токен доступа</string>
     <string name="value_not_entered">Введите свой личный токен доступа</string>
@@ -20,8 +21,11 @@
 
     <string name="forbidden_error">Доступ запрещен</string>
     <string name="internet_access_error">Проверьте подключение к Интернету</string>
+    <string name="owner_name_is_null_or_blank">Имя владельца равно null или пустое</string>
     <string name="requires_authentication_error">Требуется аутентификация</string>
     <string name="resource_not_found_error">Ресурс не найден</string>
+    <string name="unexpected_char">Неожиданный символ</string>
     <string name="unknown_error">Неизвестная ошибка: %s</string>
     <string name="validation_failed_error">Проверка не удалась, или конечная точка подверглась спаму</string>
+    <string name="title_repositories">Репозитории</string>
 </resources>

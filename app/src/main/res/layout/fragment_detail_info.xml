@@ -12,23 +12,60 @@
     android:paddingBottom="8dp"
     tools:context=".presentation.AuthFragment">
 
+    <TextView
+        android:id="@+id/back_stack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        app:drawableEndCompat="@drawable/arrow_back_stack"
+        app:layout_constraintBottom_toBottomOf="@id/sign_out"
+        app:layout_constraintEnd_toStartOf="@id/repository_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/repository_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@id/sign_out"
+        app:layout_constraintEnd_toStartOf="@id/sign_out"
+        app:layout_constraintStart_toEndOf="@id/back_stack"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/repository_name" />
+
+    <TextView
+        android:id="@+id/sign_out"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="20dp"
+        app:drawableEndCompat="@drawable/sign_out_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/repository_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="@dimen/progress_bar_size"
         android:layout_height="@dimen/progress_bar_size"
         android:indeterminateTint="@color/white"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/sign_out">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/inner_constraint_layout"
