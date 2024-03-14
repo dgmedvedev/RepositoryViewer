@@ -13,6 +13,7 @@ Dmitry Medvedev
 * LiveData/StateFlow
 * SharedPreferences
 * Jetpack Navigation
+* Dagger Hilt
 
 ## Contact information
 * https://www.linkedin.com/in/dg-medvedev
