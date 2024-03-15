@@ -59,7 +59,7 @@ class RepositoriesListFragment : Fragment() {
             if (isInternetAvailable) {
                 repositoriesListViewModel.loadData()
             } else {
-                showToast(getString(R.string.internet_access_error))
+                showToast(message = getString(R.string.internet_access_error))
             }
         }
     }
@@ -72,7 +72,7 @@ class RepositoriesListFragment : Fragment() {
     private fun launchFragment(repoId: String) {
         findNavController().navigate(
             RepositoriesListFragmentDirections.actionRepositoriesListFragmentToDetailInfoFragment(
-                repoId
+                repoId = repoId
             )
         )
     }
@@ -86,10 +86,10 @@ class RepositoriesListFragment : Fragment() {
                 repoListAdapter.submitList(state.repos)
             }
             if (state is RepositoriesListViewModel.State.Error) {
-                showError(state.error)
+                showError(error = state.error)
             }
             if (state == RepositoriesListViewModel.State.Empty) {
-                showToast(getString(R.string.list_is_empty))
+                showToast(message = getString(R.string.list_is_empty))
             }
         }
     }
@@ -106,11 +106,11 @@ class RepositoriesListFragment : Fragment() {
                 if (isInternetAvailable) {
                     launchFragment(it.id)
                 } else {
-                    showToast(getString(R.string.internet_access_error))
+                    showToast(message = getString(R.string.internet_access_error))
                 }
             }
         }
-        binding.signOut.setOnClickListener{
+        binding.signOut.setOnClickListener {
             findNavController().popBackStack()
         }
     }

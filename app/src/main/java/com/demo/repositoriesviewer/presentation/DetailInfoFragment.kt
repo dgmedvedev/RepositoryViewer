@@ -1,6 +1,5 @@
 package com.demo.repositoriesviewer.presentation
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -64,7 +63,7 @@ class DetailInfoFragment : Fragment() {
                 binding.tvWatchers.text = state.githubRepo.repoDetails.watchers.toString()
             }
             if (state is RepositoryInfoViewModel.State.Error) {
-                showError(state.error)
+                showError(error = state.error)
             }
             if (state is RepositoryInfoViewModel.State.Loading) {
                 viewIsInvisible()
@@ -85,7 +84,7 @@ class DetailInfoFragment : Fragment() {
                 if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) readmeState.markdown
                 else getString(R.string.readme_empty)
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
-                showError(readmeState.error)
+                showError(error = readmeState.error)
             }
         }
     }
@@ -95,11 +94,10 @@ class DetailInfoFragment : Fragment() {
         startActivity(intent)
     }
 
-    @SuppressLint("ResourceType")
     private fun setListeners() {
         binding.tvRepoUrl.setOnClickListener {
             val url = binding.tvRepoUrl.text.toString()
-            openUrl(url)
+            openUrl(url = url)
         }
         binding.backStack.setOnClickListener {
             findNavController().popBackStack()

@@ -34,7 +34,7 @@ class RepositoriesListViewModel @Inject constructor(
                     _state.value = State.Empty
                 }
             } catch (error: Throwable) {
-                showError(error)
+                showError(error = error)
             }
         }
     }
@@ -52,7 +52,7 @@ class RepositoriesListViewModel @Inject constructor(
 
     private fun showError(error: Throwable) {
         when (error) {
-            is Exception -> _state.value = State.Error(error.message.toString())
+            is Exception -> _state.value = State.Error(error = error.message.toString())
             is Error -> throw Error(error.message)
         }
     }

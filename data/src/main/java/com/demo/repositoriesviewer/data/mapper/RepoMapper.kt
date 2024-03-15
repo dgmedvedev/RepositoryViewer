@@ -16,7 +16,7 @@ class RepoMapper {
     )
 
     fun mapListReposDtoToListRepos(listReposDto: List<RepoDto>): List<Repo> {
-        return listReposDto.map { repoDtoToRepo(it) }
+        return listReposDto.map { repoDtoToRepo(repoDto = it) }
     }
 
     fun ownerDtoToUserInfo(ownerDto: OwnerDto) = UserInfo(

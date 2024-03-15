@@ -44,20 +44,20 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             if (isInternetAvailable()) {
                 _state.value = State.Loading
-                if (tokenIsValid(token)) {
+                if (tokenIsValid(newToken = token)) {
                     try {
-                        signInUseCase(token)
+                        signInUseCase(token = token)
                         _token.value = token
                         val updateKeyValueStorage = KeyValue(token)
-                        saveKeyValueStorageUseCase(updateKeyValueStorage)
+                        saveKeyValueStorageUseCase(keyValue = updateKeyValueStorage)
                         _actions.send(Action.RouteToMain)
                     } catch (e: RuntimeException) {
-                        _actions.send(Action.ShowError(e.message.toString()))
+                        _actions.send(Action.ShowError(message = e.message.toString()))
                     }
                     _state.value = State.Idle
                 }
             } else {
-                _actions.send(Action.ShowError(INTERNET_ACCESS_ERROR))
+                _actions.send(Action.ShowError(message = INTERNET_ACCESS_ERROR))
             }
         }
     }
@@ -75,15 +75,15 @@ class AuthViewModel @Inject constructor(
 
     private fun tokenIsValid(newToken: String?): Boolean {
         if (newToken.isNullOrBlank()) {
-            _state.value = State.InvalidInput(VALUE_NOT_ENTERED)
+            _state.value = State.InvalidInput(reason = VALUE_NOT_ENTERED)
             return false
         }
         if (Pattern.matches(IN_CYRILLIC, newToken)) {
-            _state.value = State.InvalidInput(VALUE_INVALID)
+            _state.value = State.InvalidInput(reason = VALUE_INVALID)
             return false
         }
         if (!Pattern.matches(NOT_CHAR, newToken)) {
-            _state.value = State.InvalidInput(UNEXPECTED_CHAR)
+            _state.value = State.InvalidInput(reason = UNEXPECTED_CHAR)
             return false
         }
         return true
@@ -95,7 +95,7 @@ class AuthViewModel @Inject constructor(
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
         const val AVAILABLE_ADDRESS = "api.github.com"
-        const val NOT_CHAR = "^[a-zA-Z0-9_]*\$"
+        const val NOT_CHAR = "^\\w*\$"
         const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
         const val INTERNET_ACCESS_ERROR = "internet_access_error"
         const val UNEXPECTED_CHAR = "Unexpected char"
