@@ -100,7 +100,7 @@ class RepositoryInfoViewModel @Inject constructor(
         const val HTTP_403_ERROR = "HTTP 403 "
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
-        const val OWNER_NAME_IS_NULL_OR_BLANK = "owner_name_is_null_or_blank"
+        const val OWNER_NAME_IS_NULL_OR_BLANK = "Owner name is null or blank"
         const val VALUE_IS_EMPTY = "Empty"
     }
 

@@ -73,7 +73,8 @@ class AppRepositoryImpl(
         val authorizationHeader = " token $token"
         val ownerDto = apiService.getOwnerDto(authorization = authorizationHeader)
         userName = ownerDto.login
-        val keyValue = KeyValue(token)
+        val keyValue = KeyValue()
+        keyValue.authToken = token
         saveKeyValue(keyValue = keyValue)
         return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
     }

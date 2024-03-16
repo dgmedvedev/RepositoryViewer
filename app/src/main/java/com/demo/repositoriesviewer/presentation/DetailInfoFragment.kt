@@ -103,9 +103,7 @@ class DetailInfoFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.signOut.setOnClickListener {
-            findNavController().navigate(
-                DetailInfoFragmentDirections.actionDetailInfoFragmentToAuthFragment()
-            )
+            findNavController().popBackStack(R.id.authFragment, false)
         }
     }
 

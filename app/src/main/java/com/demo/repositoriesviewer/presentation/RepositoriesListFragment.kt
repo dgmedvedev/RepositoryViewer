@@ -17,9 +17,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
+
+    @Inject
+    lateinit var repoListAdapter: RepoListAdapter
 
     private var _binding: FragmentRepositoriesListBinding? = null
     private val binding: FragmentRepositoriesListBinding
@@ -29,10 +33,6 @@ class RepositoriesListFragment : Fragment() {
     private val repositoriesListViewModel: RepositoriesListViewModel by viewModels()
 
     private var toastMessage: Toast? = null
-
-    private val repoListAdapter by lazy {
-        RepoListAdapter(requireContext())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
