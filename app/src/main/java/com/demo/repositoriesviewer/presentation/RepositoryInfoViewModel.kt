@@ -40,41 +40,41 @@ class RepositoryInfoViewModel @Inject constructor(
                 val ownerName = repo.repoDetails.userInfo?.name
                 val repositoryName = repo.repoDetails.name
                 val branchName = repo.repoDetails.branchName
-                _state.value = State.Loaded(repo, ReadmeState.Loading)
+                _state.value = State.Loaded(githubRepo = repo, readmeState = ReadmeState.Loading)
 
                 if (!ownerName.isNullOrBlank()) {
                     _readmeState.value = ReadmeState.Loading
                     try {
                         val markdown = withContext(Dispatchers.IO) {
                             val rawReadme = getRepositoryReadmeUseCase(
-                                ownerName,
-                                repositoryName,
-                                branchName
+                                ownerName = ownerName,
+                                repositoryName = repositoryName,
+                                branchName = branchName
                             )
-                            rawReadmeToHtml(rawReadme)
+                            rawReadmeToHtml(rawReadme = rawReadme)
                         }
-                        _readmeState.value = ReadmeState.Loaded(markdown)
+                        _readmeState.value = ReadmeState.Loaded(markdown = markdown)
                     } catch (e: Exception) {
                         _readmeState.value =
                             if (e.message == VALUE_IS_EMPTY) ReadmeState.Empty
-                            else ReadmeState.Error(e.message.toString())
+                            else ReadmeState.Error(error = e.message.toString())
                     }
                     if (ownerName.isEmpty() && repositoryName.isEmpty() && branchName.isEmpty()) {
                         _readmeState.value = ReadmeState.Empty
                     }
                 } else {
-                    _readmeState.value = ReadmeState.Error(OWNER_NAME_IS_NULL_OR_BLANK)
+                    _readmeState.value = ReadmeState.Error(error = OWNER_NAME_IS_NULL_OR_BLANK)
                 }
             } catch (error: Throwable) {
-                showError(error)
+                showError(error = error)
             }
         }
     }
 
     private suspend fun downloadRepo(repoId: String): Repo =
         withContext(Dispatchers.IO) {
-            val repositoryDetails = getRepositoryUseCase(repoId)
-            Repo(repoId, repositoryDetails)
+            val repositoryDetails = getRepositoryUseCase(repoId = repoId)
+            Repo(id = repoId, repoDetails = repositoryDetails)
         }
 
     private fun rawReadmeToHtml(rawReadme: String): String = run {
@@ -90,7 +90,7 @@ class RepositoryInfoViewModel @Inject constructor(
 
     private fun showError(error: Throwable) {
         when (error) {
-            is Exception -> _state.value = State.Error(error.message.toString())
+            is Exception -> _state.value = State.Error(error = error.message.toString())
             is Error -> throw Error(error.message)
         }
     }
@@ -100,7 +100,7 @@ class RepositoryInfoViewModel @Inject constructor(
         const val HTTP_403_ERROR = "HTTP 403 "
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
-        const val OWNER_NAME_IS_NULL_OR_BLANK = "owner_name_is_null_or_blank"
+        const val OWNER_NAME_IS_NULL_OR_BLANK = "Owner name is null or blank"
         const val VALUE_IS_EMPTY = "Empty"
     }
 

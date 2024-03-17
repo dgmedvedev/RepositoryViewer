@@ -38,26 +38,32 @@ class AuthViewModel @Inject constructor(
     init {
         val keyValueStorage = getKeyValueStorageUseCase()
         _token.value = keyValueStorage.authToken
+        if (!keyValueStorage.authToken.isNullOrBlank()) {
+            onSignButtonPressed(keyValueStorage.authToken)
+        }
     }
 
-    fun onSignButtonPressed(token: String) {
+    fun onSignButtonPressed(token: String?) {
         viewModelScope.launch {
             if (isInternetAvailable()) {
-                _state.value = State.Loading
-                if (tokenIsValid(token)) {
-                    try {
-                        signInUseCase(token)
-                        _token.value = token
-                        val updateKeyValueStorage = KeyValue(token)
-                        saveKeyValueStorageUseCase(updateKeyValueStorage)
-                        _actions.send(Action.RouteToMain)
-                    } catch (e: RuntimeException) {
-                        _actions.send(Action.ShowError(e.message.toString()))
+                token?.let { token ->
+                    _state.value = State.Loading
+                    if (tokenIsValid(newToken = token)) {
+                        try {
+                            signInUseCase(token = token)
+                            _token.value = token
+                            val updateKeyValueStorage = KeyValue()
+                            updateKeyValueStorage.authToken = token
+                            saveKeyValueStorageUseCase(keyValue = updateKeyValueStorage)
+                            _actions.send(Action.RouteToMain)
+                        } catch (e: RuntimeException) {
+                            _actions.send(Action.ShowError(message = e.message.toString()))
+                        }
+                        _state.value = State.Idle
                     }
-                    _state.value = State.Idle
                 }
             } else {
-                _actions.send(Action.ShowError(INTERNET_ACCESS_ERROR))
+                _actions.send(Action.ShowError(message = INTERNET_ACCESS_ERROR))
             }
         }
     }
@@ -75,15 +81,15 @@ class AuthViewModel @Inject constructor(
 
     private fun tokenIsValid(newToken: String?): Boolean {
         if (newToken.isNullOrBlank()) {
-            _state.value = State.InvalidInput(VALUE_NOT_ENTERED)
+            _state.value = State.InvalidInput(reason = VALUE_NOT_ENTERED)
             return false
         }
         if (Pattern.matches(IN_CYRILLIC, newToken)) {
-            _state.value = State.InvalidInput(VALUE_INVALID)
+            _state.value = State.InvalidInput(reason = VALUE_INVALID)
             return false
         }
         if (!Pattern.matches(NOT_CHAR, newToken)) {
-            _state.value = State.InvalidInput(UNEXPECTED_CHAR)
+            _state.value = State.InvalidInput(reason = UNEXPECTED_CHAR)
             return false
         }
         return true
@@ -95,13 +101,13 @@ class AuthViewModel @Inject constructor(
         const val HTTP_404_ERROR = "HTTP 404 "
         const val HTTP_422_ERROR = "HTTP 422 "
         const val AVAILABLE_ADDRESS = "api.github.com"
-        const val NOT_CHAR = "^[a-zA-Z0-9_]*\$"
+        const val NOT_CHAR = "^\\w*\$"
         const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
-        const val INTERNET_ACCESS_ERROR = "internet_access_error"
+        const val INTERNET_ACCESS_ERROR = "Internet access error"
         const val UNEXPECTED_CHAR = "Unexpected char"
-        const val VALUE_INVALID = "value_invalid"
+        const val VALUE_INVALID = "Value invalid"
         const val VALUE_IS_EMPTY = ""
-        const val VALUE_NOT_ENTERED = "value_not_entered"
+        const val VALUE_NOT_ENTERED = "Value is not entered"
     }
 
     sealed interface State {

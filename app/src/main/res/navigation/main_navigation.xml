@@ -31,8 +31,5 @@
         <argument
             android:name="repoId"
             app:argType="string" />
-        <action
-            android:id="@+id/action_detailInfoFragment_to_authFragment"
-            app:destination="@id/authFragment" />
     </fragment>
 </navigation>

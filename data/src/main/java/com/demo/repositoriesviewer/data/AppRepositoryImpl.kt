@@ -56,26 +56,32 @@ class AppRepositoryImpl(
         val downloadUrl: String
         try {
             downloadUrl = withContext(Dispatchers.IO) {
-                val jsonObject = apiService.getReadme(ownerName, repositoryName, branchName)
+                val jsonObject = apiService.getReadme(
+                    ownerName = ownerName,
+                    repositoryName = repositoryName,
+                    branchName = branchName
+                )
                 jsonObject.get("download_url").asString
             }
         } catch (e: Exception) {
             throw Exception("Empty")
         }
-        return downloadRawReadme(downloadUrl)
+        return downloadRawReadme(downloadUrl = downloadUrl)
     }
 
     override suspend fun signIn(token: String): UserInfo {
         val authorizationHeader = " token $token"
-        val ownerDto = apiService.getOwnerDto(authorizationHeader)
+        val ownerDto = apiService.getOwnerDto(authorization = authorizationHeader)
         userName = ownerDto.login
-        val keyValue = KeyValue(token)
-        saveKeyValue(keyValue)
-        return mapper.ownerDtoToUserInfo(ownerDto)
+        val keyValue = KeyValue()
+        keyValue.authToken = token
+        saveKeyValue(keyValue = keyValue)
+        return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
     }
 
     private suspend fun setWatchers(repo: Repo) {
-        val listWatchers = apiService.getListWatchers(userName, repo.repoDetails.name)
+        val listWatchers =
+            apiService.getListWatchers(ownerName = userName, repositoryName = repo.repoDetails.name)
         repo.repoDetails.watchers = listWatchers.size
     }
 

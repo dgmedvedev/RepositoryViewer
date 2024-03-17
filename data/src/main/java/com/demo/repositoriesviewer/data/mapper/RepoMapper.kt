@@ -11,12 +11,13 @@ class RepoMapper {
         authToken = keyValue.authToken
     )
 
-    fun keyValueStorageToKeyValue(keyValueStorage: KeyValueStorage): KeyValue = KeyValue(
-        authToken = keyValueStorage.authToken
-    )
+    fun keyValueStorageToKeyValue(keyValueStorage: KeyValueStorage): KeyValue = KeyValue().also {
+        it.authToken = keyValueStorage.authToken
+    }
+
 
     fun mapListReposDtoToListRepos(listReposDto: List<RepoDto>): List<Repo> {
-        return listReposDto.map { repoDtoToRepo(it) }
+        return listReposDto.map { repoDtoToRepo(repoDto = it) }
     }
 
     fun ownerDtoToUserInfo(ownerDto: OwnerDto) = UserInfo(
