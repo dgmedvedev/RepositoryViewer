@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Repositories Viewer</string>
+    <string name="app_name">RepoViewer</string>
     <string name="button_sign_in">Sign in</string>
     <string name="forks">forks</string>
     <string name="number_of_forks">Number of forks</string>
