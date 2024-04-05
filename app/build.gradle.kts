@@ -37,8 +37,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    packagingOptions {
-        resources.excludes += "DebugProbesKt.bin"
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
     buildFeatures {
         viewBinding = true
