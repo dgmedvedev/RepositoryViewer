@@ -20,7 +20,7 @@ class AppRepositoryImpl(
 ) :
     AppRepository {
 
-    lateinit var userName: String
+    private lateinit var userName: String
 
     override fun getKeyValue(): KeyValue {
         return mapper.keyValueStorageToKeyValue(tokenStorage.get())
