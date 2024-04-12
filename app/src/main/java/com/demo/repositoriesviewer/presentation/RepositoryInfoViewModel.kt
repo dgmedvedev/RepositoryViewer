@@ -5,9 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.domain.entities.Repo
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoryReadmeUseCase
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoryUseCase
+import com.demo.repositoriesviewer.domain.models.Repo
+import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RepositoryInfoViewModel @Inject constructor(
-    private val getRepositoryUseCase: GetRepositoryUseCase,
-    private val getRepositoryReadmeUseCase: GetRepositoryReadmeUseCase
+    private val appRepository: AppRepository
 ) : ViewModel() {
 
     private val _state = MutableLiveData<State>()
@@ -46,7 +44,7 @@ class RepositoryInfoViewModel @Inject constructor(
                     _readmeState.value = ReadmeState.Loading
                     try {
                         val markdown = withContext(Dispatchers.IO) {
-                            val rawReadme = getRepositoryReadmeUseCase(
+                            val rawReadme = appRepository.getRepositoryReadme(
                                 ownerName = ownerName,
                                 repositoryName = repositoryName,
                                 branchName = branchName
@@ -73,7 +71,7 @@ class RepositoryInfoViewModel @Inject constructor(
 
     private suspend fun downloadRepo(repoId: String): Repo =
         withContext(Dispatchers.IO) {
-            val repositoryDetails = getRepositoryUseCase(repoId = repoId)
+            val repositoryDetails = appRepository.getRepository(repoId = repoId)
             Repo(id = repoId, repoDetails = repositoryDetails)
         }
 

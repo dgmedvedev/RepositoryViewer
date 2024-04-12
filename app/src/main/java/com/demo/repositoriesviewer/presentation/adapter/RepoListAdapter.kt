@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.ItemRepoBinding
-import com.demo.repositoriesviewer.domain.entities.Repo
+import com.demo.repositoriesviewer.domain.models.Repo
 
 class RepoListAdapter(private val context: Context) :
     ListAdapter<Repo, RepoListAdapter.RepoListViewHolder>(RepoDiffCallback()) {

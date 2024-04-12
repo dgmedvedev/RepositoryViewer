@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.domain.entities.KeyValue
-import com.demo.repositoriesviewer.domain.usecases.GetKeyValueStorageUseCase
-import com.demo.repositoriesviewer.domain.usecases.SaveKeyValueStorageUseCase
-import com.demo.repositoriesviewer.domain.usecases.SignInUseCase
+import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -21,9 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    getKeyValueStorageUseCase: GetKeyValueStorageUseCase,
-    private val saveKeyValueStorageUseCase: SaveKeyValueStorageUseCase,
-    private val signInUseCase: SignInUseCase
+    private val appRepository: AppRepository
 ) : ViewModel() {
 
     private val _token = MutableLiveData<String>()
@@ -36,10 +31,10 @@ class AuthViewModel @Inject constructor(
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
     init {
-        val keyValueStorage = getKeyValueStorageUseCase()
-        _token.value = keyValueStorage.authToken
-        if (!keyValueStorage.authToken.isNullOrBlank()) {
-            onSignButtonPressed(keyValueStorage.authToken)
+        val token = appRepository.getToken() ?: VALUE_IS_EMPTY
+        _token.value = token
+        if (token.isNotBlank()) {
+            onSignButtonPressed(token = token)
         }
     }
 
@@ -50,11 +45,9 @@ class AuthViewModel @Inject constructor(
                     _state.value = State.Loading
                     if (tokenIsValid(newToken = token)) {
                         try {
-                            signInUseCase(token = token)
+                            appRepository.signIn(token = token)
                             _token.value = token
-                            val updateKeyValueStorage = KeyValue()
-                            updateKeyValueStorage.authToken = token
-                            saveKeyValueStorageUseCase(keyValue = updateKeyValueStorage)
+                            appRepository.saveToken(newToken = token)
                             _actions.send(Action.RouteToMain)
                         } catch (e: RuntimeException) {
                             _actions.send(Action.ShowError(message = e.message.toString()))

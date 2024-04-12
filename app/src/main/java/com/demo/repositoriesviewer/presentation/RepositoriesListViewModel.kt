@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.demo.repositoriesviewer.domain.entities.Repo
-import com.demo.repositoriesviewer.domain.usecases.GetRepositoriesUseCase
+import com.demo.repositoriesviewer.domain.models.Repo
+import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RepositoriesListViewModel @Inject constructor(
-    private val getRepositoriesUseCase: GetRepositoriesUseCase
+    private val appRepository: AppRepository
 ) : ViewModel() {
 
     private val _state = MutableLiveData<State>()
@@ -27,7 +27,7 @@ class RepositoriesListViewModel @Inject constructor(
             try {
                 _state.value = State.Loading
                 val repoList = withContext(Dispatchers.IO) {
-                    getRepositoriesUseCase()
+                    appRepository.getRepositories()
                 }
                 _state.value = State.Loaded(repoList)
                 if (repoList.isEmpty()) {
