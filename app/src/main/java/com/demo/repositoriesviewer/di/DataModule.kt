@@ -1,12 +1,10 @@
 package com.demo.repositoriesviewer.di
 
 import android.content.Context
+import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.data.network.ApiService
-import com.demo.repositoriesviewer.data.mapper.RepoMapper
-import com.demo.repositoriesviewer.data.storage.TokenStorage
-import com.demo.repositoriesviewer.data.storage.SharedPrefTokenStorage
-import com.demo.repositoriesviewer.data.AppRepositoryImpl
+import com.demo.repositoriesviewer.data.repository.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.Module
 import dagger.Provides
@@ -33,19 +31,13 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideTokenStorage(@ApplicationContext context: Context): TokenStorage {
-        return SharedPrefTokenStorage(context = context)
-    }
-
-    @Provides
-    @Singleton
     fun provideAppRepository(
-        tokenStorage: TokenStorage,
+        @ApplicationContext context: Context,
         apiService: ApiService,
         mapper: RepoMapper
     ): AppRepository {
         return AppRepositoryImpl(
-            tokenStorage = tokenStorage,
+            context = context,
             apiService = apiService,
             mapper = mapper
         )

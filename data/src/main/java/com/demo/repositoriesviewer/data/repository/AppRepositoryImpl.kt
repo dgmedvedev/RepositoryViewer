@@ -1,12 +1,12 @@
-package com.demo.repositoriesviewer.data
+package com.demo.repositoriesviewer.data.repository
 
+import android.content.Context
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiService
-import com.demo.repositoriesviewer.data.storage.TokenStorage
-import com.demo.repositoriesviewer.domain.entities.KeyValue
-import com.demo.repositoriesviewer.domain.entities.Repo
-import com.demo.repositoriesviewer.domain.entities.RepoDetails
-import com.demo.repositoriesviewer.domain.entities.UserInfo
+import com.demo.repositoriesviewer.data.storage.KeyValueStorage
+import com.demo.repositoriesviewer.domain.models.Repo
+import com.demo.repositoriesviewer.domain.models.RepoDetails
+import com.demo.repositoriesviewer.domain.models.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,21 +14,21 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class AppRepositoryImpl(
-    private val tokenStorage: TokenStorage,
+    context: Context,
     private val apiService: ApiService,
     private val mapper: RepoMapper
 ) :
     AppRepository {
 
+    private val keyValueStorage = KeyValueStorage(context = context)
     private lateinit var userName: String
 
-    override fun getKeyValue(): KeyValue {
-        return mapper.keyValueStorageToKeyValue(tokenStorage.get())
+    override fun getToken(): String? {
+        return keyValueStorage.authToken
     }
 
-    override fun saveKeyValue(keyValue: KeyValue) {
-        val keyValueStorage = mapper.keyValueToKeyValueStorage(keyValue)
-        tokenStorage.save(keyValueStorage = keyValueStorage)
+    override fun saveToken(newToken: String) {
+        keyValueStorage.authToken = newToken
     }
 
     override suspend fun getRepositories(): List<Repo> {
@@ -73,9 +73,6 @@ class AppRepositoryImpl(
         val authorizationHeader = " token $token"
         val ownerDto = apiService.getOwnerDto(authorization = authorizationHeader)
         userName = ownerDto.login
-        val keyValue = KeyValue()
-        keyValue.authToken = token
-        saveKeyValue(keyValue = keyValue)
         return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
     }
 

@@ -1,4 +1,4 @@
-package com.demo.repositoriesviewer.domain.entities
+package com.demo.repositoriesviewer.domain.models
 
 data class RepoDetails(
     val forks: Int,
