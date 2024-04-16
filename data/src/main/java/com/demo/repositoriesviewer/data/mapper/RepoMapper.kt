@@ -10,7 +10,7 @@ import com.demo.repositoriesviewer.domain.models.UserInfo
 class RepoMapper {
 
     fun mapListReposDtoToListRepos(listReposDto: List<RepoDto>): List<Repo> {
-        return listReposDto.map { repoDtoToRepo(repoDto = it) }
+        return listReposDto.map { it.toDomain() }
     }
 
     fun ownerDtoToUserInfo(ownerDto: OwnerDto) = UserInfo(
@@ -21,20 +21,18 @@ class RepoMapper {
         spdxId = repoDto.license?.spdxId
     )
 
-    private fun repoDetailsDtoToRepoDetails(repoDto: RepoDto) = RepoDetails(
-        forks = repoDto.forksCount,
-        stars = repoDto.stargazersCount,
-        branchName = repoDto.branchName,
-        description = repoDto.description,
-        language = repoDto.language,
-        name = repoDto.name,
-        url = repoDto.url,
-        license = licenseDtoToLicense(repoDto),
-        userInfo = ownerDtoToUserInfo(repoDto.owner)
-    )
-
-    private fun repoDtoToRepo(repoDto: RepoDto) = Repo(
-        id = repoDto.id,
-        repoDetails = repoDetailsDtoToRepoDetails(repoDto)
+    private fun RepoDto.toDomain() = Repo(
+        id = id,
+        repoDetails = RepoDetails(
+            forks = forksCount,
+            stars = stargazersCount,
+            branchName = branchName,
+            description = description,
+            language = language,
+            name = name,
+            url = url,
+            license = licenseDtoToLicense(this),
+            userInfo = ownerDtoToUserInfo(owner)
+        )
     )
 }
