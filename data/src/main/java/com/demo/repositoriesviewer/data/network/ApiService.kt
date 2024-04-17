@@ -2,7 +2,7 @@ package com.demo.repositoriesviewer.data.network
 
 import com.demo.repositoriesviewer.data.network.models.OwnerDto
 import com.demo.repositoriesviewer.data.network.models.RepoDto
-import com.demo.repositoriesviewer.data.network.models.Watcher
+import com.demo.repositoriesviewer.data.network.models.WatcherDto
 import com.google.gson.JsonObject
 import retrofit2.http.*
 
@@ -16,13 +16,13 @@ interface ApiService {
 
     @GET("repos/{owner}/{repo}/subscribers")
     suspend fun getListWatchers(
-        @Path(PATH_PARAM_OWNER) ownerName: String,
+        @Path(PATH_PARAM_OWNER) ownerName: String?,
         @Path(PATH_PARAM_REPO) repositoryName: String
-    ): List<Watcher>
+    ): List<WatcherDto>
 
     @GET("user")
     suspend fun getOwnerDto(
-        @Header(HEADER_PARAM_AUTHORIZATION) authorization: String?
+        @Header(HEADER_PARAM_AUTHORIZATION) authToken: String?
     ): OwnerDto
 
     @GET("repos/{owner}/{repo}/readme")

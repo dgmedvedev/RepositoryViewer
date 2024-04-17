@@ -21,7 +21,7 @@ class AppRepositoryImpl(
     AppRepository {
 
     private val keyValueStorage = KeyValueStorage(context = context)
-    private lateinit var userName: String
+    private var userName: String? = null
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -70,8 +70,8 @@ class AppRepositoryImpl(
     }
 
     override suspend fun signIn(token: String): UserInfo {
-        val authorizationHeader = " token $token"
-        val ownerDto = apiService.getOwnerDto(authorization = authorizationHeader)
+        val authToken = " token $token"
+        val ownerDto = apiService.getOwnerDto(authToken = authToken)
         userName = ownerDto.login
         return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
     }
