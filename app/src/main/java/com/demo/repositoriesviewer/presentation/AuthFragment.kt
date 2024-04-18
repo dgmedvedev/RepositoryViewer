@@ -39,7 +39,7 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeViewModel()
+        bindViewModel()
         setListeners()
     }
 
@@ -52,7 +52,7 @@ class AuthFragment : Fragment() {
         findNavController().navigate(R.id.action_authFragment_to_repositoriesListFragment)
     }
 
-    private fun observeViewModel() {
+    private fun bindViewModel() {
         authViewModel.token.observe(viewLifecycleOwner) { token ->
             binding.etAuthorization.setText(token)
         }

@@ -15,12 +15,12 @@ import java.net.URL
 
 class AppRepositoryImpl(
     context: Context,
-    private val apiService: ApiService,
-    private val mapper: RepoMapper
+    private val apiService: ApiService
 ) :
     AppRepository {
 
     private val keyValueStorage = KeyValueStorage(context = context)
+    private val mapper = RepoMapper
     private var userName: String? = null
 
     override fun getToken(): String? {
