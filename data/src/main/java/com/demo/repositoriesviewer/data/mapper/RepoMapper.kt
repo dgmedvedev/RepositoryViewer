@@ -7,7 +7,7 @@ import com.demo.repositoriesviewer.domain.models.Repo
 import com.demo.repositoriesviewer.domain.models.RepoDetails
 import com.demo.repositoriesviewer.domain.models.UserInfo
 
-class RepoMapper {
+object RepoMapper {
 
     fun mapListReposDtoToListRepos(listReposDto: List<RepoDto>): List<Repo> {
         return listReposDto.map { it.toDomain() }

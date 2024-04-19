@@ -15,13 +15,13 @@ import java.net.URL
 
 class AppRepositoryImpl(
     context: Context,
-    private val apiService: ApiService,
-    private val mapper: RepoMapper
+    private val apiService: ApiService
 ) :
     AppRepository {
 
     private val keyValueStorage = KeyValueStorage(context = context)
-    private lateinit var userName: String
+    private val mapper = RepoMapper
+    private var userName: String? = null
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -70,8 +70,8 @@ class AppRepositoryImpl(
     }
 
     override suspend fun signIn(token: String): UserInfo {
-        val authorizationHeader = " token $token"
-        val ownerDto = apiService.getOwnerDto(authorization = authorizationHeader)
+        val authToken = " token $token"
+        val ownerDto = apiService.getOwnerDto(authToken = authToken)
         userName = ownerDto.login
         return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
     }

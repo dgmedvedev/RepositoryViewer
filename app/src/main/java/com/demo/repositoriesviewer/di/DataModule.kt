@@ -1,7 +1,6 @@
 package com.demo.repositoriesviewer.di
 
 import android.content.Context
-import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.repository.AppRepositoryImpl
@@ -25,21 +24,13 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideMapper(): RepoMapper {
-        return RepoMapper()
-    }
-
-    @Provides
-    @Singleton
     fun provideAppRepository(
         @ApplicationContext context: Context,
-        apiService: ApiService,
-        mapper: RepoMapper
+        apiService: ApiService
     ): AppRepository {
         return AppRepositoryImpl(
             context = context,
-            apiService = apiService,
-            mapper = mapper
+            apiService = apiService
         )
     }
 }

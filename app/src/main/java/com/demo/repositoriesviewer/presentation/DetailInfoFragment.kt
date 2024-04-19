@@ -41,7 +41,7 @@ class DetailInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repositoryInfoViewModel.loadData(args.repoId)
-        observeViewModel()
+        bindViewModel()
         setListeners()
     }
 
@@ -50,7 +50,7 @@ class DetailInfoFragment : Fragment() {
         _binding = null
     }
 
-    private fun observeViewModel() {
+    private fun bindViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
                 binding.repositoryName.text = state.githubRepo.repoDetails.name

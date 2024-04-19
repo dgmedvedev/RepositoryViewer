@@ -47,7 +47,7 @@ class RepositoriesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.repoRecyclerView.adapter = repoListAdapter
-        observeViewModel()
+        bindViewModel()
         setListeners()
         val deferredInternetAvailable = lifecycleScope.async {
             withContext(Dispatchers.IO) {
@@ -77,7 +77,7 @@ class RepositoriesListFragment : Fragment() {
         )
     }
 
-    private fun observeViewModel() {
+    private fun bindViewModel() {
         repositoriesListViewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progressBar.visibility =
                 if (state == RepositoriesListViewModel.State.Loading) View.VISIBLE else View.GONE
