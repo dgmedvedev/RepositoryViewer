@@ -69,11 +69,18 @@ class AppRepositoryImpl(
         return downloadRawReadme(downloadUrl = downloadUrl)
     }
 
+//    override suspend fun signIn(token: String): UserInfo {
+//        val authToken = " token $token"
+//        val ownerDto = apiService.getOwnerDto(authToken = authToken)
+//        userName = ownerDto.login
+//        return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
+//    }
+
     override suspend fun signIn(token: String): UserInfo {
         val authToken = " token $token"
         val ownerDto = apiService.getOwnerDto(authToken = authToken)
         userName = ownerDto.login
-        return mapper.ownerDtoToUserInfo(ownerDto = ownerDto)
+        return UserInfo("not important")
     }
 
     private suspend fun setWatchers(repo: Repo) {
