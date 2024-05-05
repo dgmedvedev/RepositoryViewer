@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.domain.models.Repo
+import com.demo.repositoriesviewer.domain.models.RepoItem
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ class RepositoriesListViewModel @Inject constructor(
             try {
                 _state.value = State.Loading
                 val repoList = withContext(Dispatchers.IO) {
-                    appRepository.getRepositories()
+                    //appRepository.getRepositories()
+                    appRepository.getRepositoriesNew()
                 }
                 _state.value = State.Loaded(repoList)
                 if (repoList.isEmpty()) {
@@ -68,7 +70,7 @@ class RepositoriesListViewModel @Inject constructor(
 
     sealed interface State {
         object Loading : State
-        data class Loaded(val repos: List<Repo>) : State
+        data class Loaded(val repos: List<RepoItem>) : State
         data class Error(val error: String) : State
         object Empty : State
     }

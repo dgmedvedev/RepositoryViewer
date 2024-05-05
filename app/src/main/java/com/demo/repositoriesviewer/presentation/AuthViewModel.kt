@@ -1,6 +1,5 @@
 package com.demo.repositoriesviewer.presentation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,29 +38,6 @@ class AuthViewModel @Inject constructor(
 //        }
     }
 
-//    fun onSignButtonPressed(token: String?) {
-//        viewModelScope.launch {
-//            if (isInternetAvailable()) {
-//                token?.let { token ->
-//                    _state.value = State.Loading
-//                    if (tokenIsValid(newToken = token)) {
-//                        try {
-//                            appRepository.signIn(token = token)
-//                            _token.value = token
-//                            appRepository.saveToken(newToken = token)
-//                            _actions.send(Action.RouteToMain)
-//                        } catch (e: RuntimeException) {
-//                            _actions.send(Action.ShowError(message = e.message.toString()))
-//                        }
-//                        _state.value = State.Idle
-//                    }
-//                }
-//            } else {
-//                _actions.send(Action.ShowError(message = INTERNET_ACCESS_ERROR))
-//            }
-//        }
-//    }
-
     fun onSignButtonPressed(token: String?) {
         viewModelScope.launch {
             if (isInternetAvailable()) {
@@ -72,6 +48,7 @@ class AuthViewModel @Inject constructor(
                             appRepository.signIn(token = token)
                             _token.value = token
                             appRepository.saveToken(newToken = token)
+                            _actions.send(Action.RouteToMain)
                         } catch (e: RuntimeException) {
                             _actions.send(Action.ShowError(message = e.message.toString()))
                         }

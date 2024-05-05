@@ -1,11 +1,13 @@
 package com.demo.repositoriesviewer.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.storage.KeyValueStorage
 import com.demo.repositoriesviewer.domain.models.Repo
 import com.demo.repositoriesviewer.domain.models.RepoDetails
+import com.demo.repositoriesviewer.domain.models.RepoItem
 import com.demo.repositoriesviewer.domain.models.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,7 @@ class AppRepositoryImpl(
     private val keyValueStorage = KeyValueStorage(context = context)
     private val mapper = RepoMapper
     private var userName: String? = null
+    private lateinit var listRepoItems: List<RepoItem>
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -36,10 +39,27 @@ class AppRepositoryImpl(
         return mapper.mapListReposDtoToListRepos(listReposDto = fullListReposDto)
     }
 
+    override suspend fun getRepositoriesNew(): List<RepoItem> {
+        val fullListRepoItemsDto = apiService.getListRepoItems(userName = userName)
+        listRepoItems = mapper.mapListRepoItemsFromDtoToDomain(listRepoItemsDto = fullListRepoItemsDto)
+        return listRepoItems
+    }
+
+//    override suspend fun getRepository(repoId: String): RepoDetails {
+//        val listRepos = getRepositories()
+//        var repoDetails: RepoDetails? = null
+//        for (repo in listRepos) {
+//            if (repo.id == repoId) {
+//                setWatchers(repo = repo)
+//                repoDetails = repo.repoDetails
+//            }
+//        }
+//        return repoDetails ?: throw RuntimeException("Repository id = $repoId not found")
+//    }
+
     override suspend fun getRepository(repoId: String): RepoDetails {
-        val listRepos = getRepositories()
         var repoDetails: RepoDetails? = null
-        for (repo in listRepos) {
+        for (repo in listRepoItems) {
             if (repo.id == repoId) {
                 setWatchers(repo = repo)
                 repoDetails = repo.repoDetails
@@ -78,8 +98,11 @@ class AppRepositoryImpl(
 
     override suspend fun signIn(token: String): UserInfo {
         val authToken = " token $token"
-        val ownerDto = apiService.getOwnerDto(authToken = authToken)
-        userName = ownerDto.login
+        userName = "dgmedvedev"
+        //val hotfix = apiService.getOwnerDto(authToken = authToken)
+        val listRepoItemDto = apiService.getListRepoItems(userName = userName)
+        //Log.d("HOTFIX", "Result: $hotfix")
+        Log.d("HOTFIX", "Result: $listRepoItemDto")
         return UserInfo("not important")
     }
 
