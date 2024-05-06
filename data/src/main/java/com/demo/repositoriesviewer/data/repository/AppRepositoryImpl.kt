@@ -5,8 +5,9 @@ import android.util.Log
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.storage.KeyValueStorage
-import com.demo.repositoriesviewer.domain.models.Repo
-import com.demo.repositoriesviewer.domain.models.RepoDetails
+//import com.demo.repositoriesviewer.domain.models.Repo
+//import com.demo.repositoriesviewer.domain.models.RepoDetails
+import com.demo.repositoriesviewer.domain.models.RepoDetailsDomain
 import com.demo.repositoriesviewer.domain.models.RepoItem
 import com.demo.repositoriesviewer.domain.models.UserInfo
 import com.demo.repositoriesviewer.domain.repository.AppRepository
@@ -24,7 +25,7 @@ class AppRepositoryImpl(
     private val keyValueStorage = KeyValueStorage(context = context)
     private val mapper = RepoMapper
     private var userName: String? = null
-    private lateinit var listRepoItems: List<RepoItem>
+    private var listRepoItems: List<RepoItem> = mutableListOf()
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -34,14 +35,15 @@ class AppRepositoryImpl(
         keyValueStorage.authToken = newToken
     }
 
-    override suspend fun getRepositories(): List<Repo> {
-        val fullListReposDto = apiService.getListRepos(userName = userName)
-        return mapper.mapListReposDtoToListRepos(listReposDto = fullListReposDto)
-    }
+//    override suspend fun getRepositories(): List<Repo> {
+//        val fullListReposDto = apiService.getListRepos(userName = userName)
+//        return mapper.mapListReposDtoToListRepos(listReposDto = fullListReposDto)
+//    }
 
     override suspend fun getRepositoriesNew(): List<RepoItem> {
         val fullListRepoItemsDto = apiService.getListRepoItems(userName = userName)
-        listRepoItems = mapper.mapListRepoItemsFromDtoToDomain(listRepoItemsDto = fullListRepoItemsDto)
+        listRepoItems =
+            mapper.mapListRepoItemsFromDtoToDomain(listRepoItemsDto = fullListRepoItemsDto)
         return listRepoItems
     }
 
@@ -57,12 +59,18 @@ class AppRepositoryImpl(
 //        return repoDetails ?: throw RuntimeException("Repository id = $repoId not found")
 //    }
 
-    override suspend fun getRepository(repoId: String): RepoDetails {
-        var repoDetails: RepoDetails? = null
+    override suspend fun getRepository(repoId: String): RepoDetailsDomain {
+        var repoDetails: RepoDetailsDomain? = null
         for (repo in listRepoItems) {
             if (repo.id == repoId) {
-                setWatchers(repo = repo)
-                repoDetails = repo.repoDetails
+                val watchers = getWatchers(repo)
+                val repoDetailsDto =
+                    apiService.getRepoDetails(ownerName = userName, repositoryName = repo.name)
+
+                repoDetails = mapper.mapRepoDetailsDtoToDomain(
+                    repoDetailsDto = repoDetailsDto,
+                    watchers = watchers
+                )
             }
         }
         return repoDetails ?: throw RuntimeException("Repository id = $repoId not found")
@@ -97,19 +105,26 @@ class AppRepositoryImpl(
 //    }
 
     override suspend fun signIn(token: String): UserInfo {
-        val authToken = " token $token"
+//        val authToken = " token $token"
+//        val ownerDto = apiService.getOwnerDto(authToken = authToken)
+//        userName = ownerDto.login
         userName = "dgmedvedev"
-        //val hotfix = apiService.getOwnerDto(authToken = authToken)
         val listRepoItemDto = apiService.getListRepoItems(userName = userName)
         //Log.d("HOTFIX", "Result: $hotfix")
         Log.d("HOTFIX", "Result: $listRepoItemDto")
-        return UserInfo("not important")
+        return UserInfo("dgmedvedev")
     }
 
-    private suspend fun setWatchers(repo: Repo) {
+//    private suspend fun setWatchers(repo: Repo) {
+//        val listWatchers =
+//            apiService.getListWatchers(ownerName = userName, repositoryName = repo.repoDetails.name)
+//        repo.repoDetails.watchers = listWatchers.size
+//    }
+
+    private suspend fun getWatchers(repo: RepoItem): Int {
         val listWatchers =
-            apiService.getListWatchers(ownerName = userName, repositoryName = repo.repoDetails.name)
-        repo.repoDetails.watchers = listWatchers.size
+            apiService.getListWatchers(ownerName = userName, repositoryName = repo.name)
+        return listWatchers.size
     }
 
     private suspend fun downloadRawReadme(downloadUrl: String): String =
