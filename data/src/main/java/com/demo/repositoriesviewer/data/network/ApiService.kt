@@ -3,24 +3,17 @@ package com.demo.repositoriesviewer.data.network
 import com.demo.repositoriesviewer.data.network.models.OwnerDto
 import com.demo.repositoriesviewer.data.network.models.RepoDetailsDto
 import com.demo.repositoriesviewer.data.network.models.RepoDto
-import com.demo.repositoriesviewer.data.network.models.RepoItemDto
 import com.demo.repositoriesviewer.data.network.models.WatcherDto
 import com.google.gson.JsonObject
 import retrofit2.http.*
 
 interface ApiService {
 
-//    @GET("users/{username}/repos")
-//    suspend fun getListRepos(
-//        @Path(PATH_PARAM_USERNAME) userName: String?,
-//        @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
-//    ): List<RepoDto>
-
     @GET("users/{username}/repos")
-    suspend fun getListRepoItems(
+    suspend fun getListRepos(
         @Path(PATH_PARAM_USERNAME) userName: String?,
         @Query(QUERY_PARAM_PER_PAGE) perPage: Int = 10
-    ): List<RepoItemDto>
+    ): List<RepoDto>
 
     @GET("repos/{owner}/{repo}")
     suspend fun getRepoDetails(

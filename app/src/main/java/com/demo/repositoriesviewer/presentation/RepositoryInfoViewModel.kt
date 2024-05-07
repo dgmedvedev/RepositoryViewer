@@ -5,8 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-//import com.demo.repositoriesviewer.domain.models.Repo
-import com.demo.repositoriesviewer.domain.models.RepoDetailsDomain
+import com.demo.repositoriesviewer.domain.models.RepoDetails
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,10 +34,9 @@ class RepositoryInfoViewModel @Inject constructor(
             try {
                 _state.value = State.Loading
 
-                //val repo = downloadRepo(repoId)
                 val repoDetails = downloadRepoDetails(repoId)
                 val ownerName = repoDetails.userInfo?.name
-                val repositoryName = repoDetails.repoName
+                val repositoryName = repoDetails.name
                 val branchName = repoDetails.branchName
                 _state.value =
                     State.Loaded(githubRepo = repoDetails, readmeState = ReadmeState.Loading)
@@ -72,13 +70,7 @@ class RepositoryInfoViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun downloadRepo(repoId: String): Repo =
-//        withContext(Dispatchers.IO) {
-//            val repositoryDetails = appRepository.getRepository(repoId = repoId)
-//            Repo(id = repoId, repoDetails = repositoryDetails)
-//        }
-
-    private suspend fun downloadRepoDetails(repoId: String): RepoDetailsDomain =
+    private suspend fun downloadRepoDetails(repoId: String): RepoDetails =
         withContext(Dispatchers.IO) {
             appRepository.getRepository(repoId = repoId)
         }
@@ -110,16 +102,10 @@ class RepositoryInfoViewModel @Inject constructor(
         const val VALUE_IS_EMPTY = "Empty"
     }
 
-//    sealed interface State {
-//        object Loading : State
-//        data class Error(val error: String) : State
-//        data class Loaded(val githubRepo: Repo, val readmeState: ReadmeState) : State
-//    }
-
     sealed interface State {
         object Loading : State
         data class Error(val error: String) : State
-        data class Loaded(val githubRepo: RepoDetailsDomain, val readmeState: ReadmeState) : State
+        data class Loaded(val githubRepo: RepoDetails, val readmeState: ReadmeState) : State
     }
 
     sealed interface ReadmeState {

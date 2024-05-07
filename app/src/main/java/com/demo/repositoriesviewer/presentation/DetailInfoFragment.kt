@@ -53,7 +53,7 @@ class DetailInfoFragment : Fragment() {
     private fun bindViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
-                binding.repositoryName.text = state.githubRepo.repoName
+                binding.repositoryName.text = state.githubRepo.name
                 binding.tvRepoUrl.text = state.githubRepo.url
                 binding.tvLicense.text =
                     state.githubRepo.license?.spdxId

@@ -33,9 +33,9 @@ class AuthViewModel @Inject constructor(
     init {
         val token = appRepository.getToken() ?: VALUE_IS_EMPTY
         _token.value = token
-//        if (token.isNotBlank()) {
-//            onSignButtonPressed(token = token)
-//        }
+        if (token.isNotBlank()) {
+            onSignButtonPressed(token = token)
+        }
     }
 
     fun onSignButtonPressed(token: String?) {

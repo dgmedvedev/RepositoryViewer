@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.ItemRepoBinding
-import com.demo.repositoriesviewer.domain.models.RepoItem
+import com.demo.repositoriesviewer.domain.models.Repo
 
 class RepoListAdapter(private val context: Context) :
-    ListAdapter<RepoItem, RepoListAdapter.RepoListViewHolder>(RepoDiffCallback()) {
+    ListAdapter<Repo, RepoListAdapter.RepoListViewHolder>(RepoDiffCallback()) {
 
-    var onRepoClickListener: ((RepoItem) -> Unit)? = null
+    var onRepoClickListener: ((Repo) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoListViewHolder {
         val binding = ItemRepoBinding.inflate(
