@@ -27,7 +27,7 @@ class RepoListAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: RepoListViewHolder, position: Int) {
         val repoItem = getItem(position)
         val binding = holder.binding
-        val language = repoItem.repoDetails.language
+        val language = repoItem.language
         val color = when (language) {
             JAVA, JAVA_SCRIPT -> ContextCompat.getColor(context, R.color.yellow)
             SWIFT -> ContextCompat.getColor(context, R.color.green)
@@ -35,8 +35,8 @@ class RepoListAdapter(private val context: Context) :
         }
 
         binding.apply {
-            tvRepoName.text = repoItem.repoDetails.name
-            tvDescription.text = repoItem.repoDetails.description
+            tvRepoName.text = repoItem.name
+            tvDescription.text = repoItem.description
             tvLanguage.text = language
             tvLanguage.setTextColor(color)
 

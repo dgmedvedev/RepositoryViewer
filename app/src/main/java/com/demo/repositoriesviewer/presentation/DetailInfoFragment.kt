@@ -53,14 +53,14 @@ class DetailInfoFragment : Fragment() {
     private fun bindViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is RepositoryInfoViewModel.State.Loaded) {
-                binding.repositoryName.text = state.githubRepo.repoDetails.name
-                binding.tvRepoUrl.text = state.githubRepo.repoDetails.url
+                binding.repositoryName.text = state.githubRepo.name
+                binding.tvRepoUrl.text = state.githubRepo.url
                 binding.tvLicense.text =
-                    state.githubRepo.repoDetails.license?.spdxId
+                    state.githubRepo.license?.spdxId
                         ?: getString(R.string.without_a_license)
-                binding.tvStars.text = state.githubRepo.repoDetails.stars.toString()
-                binding.tvForks.text = state.githubRepo.repoDetails.forks.toString()
-                binding.tvWatchers.text = state.githubRepo.repoDetails.watchers.toString()
+                binding.tvStars.text = state.githubRepo.stars.toString()
+                binding.tvForks.text = state.githubRepo.forks.toString()
+                binding.tvWatchers.text = state.githubRepo.watchers.toString()
             }
             if (state is RepositoryInfoViewModel.State.Error) {
                 showError(error = state.error)

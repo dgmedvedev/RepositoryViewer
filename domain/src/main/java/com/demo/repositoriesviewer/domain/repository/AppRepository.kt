@@ -1,7 +1,7 @@
 package com.demo.repositoriesviewer.domain.repository
 
-import com.demo.repositoriesviewer.domain.models.Repo
 import com.demo.repositoriesviewer.domain.models.RepoDetails
+import com.demo.repositoriesviewer.domain.models.Repo
 import com.demo.repositoriesviewer.domain.models.UserInfo
 
 interface AppRepository {

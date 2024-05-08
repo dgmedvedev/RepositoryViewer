@@ -1,14 +1,12 @@
 package com.demo.repositoriesviewer.domain.models
 
 data class RepoDetails(
-    val forks: Int,
-    val stars: Int,
-    val branchName: String,
-    val description: String?,
-    val language: String?,
     val name: String,
     val url: String,
-    val license: License? = null,
-    val userInfo: UserInfo? = null,
-    var watchers: Int = 0
+    val license: License?,
+    val stars: Int,
+    val forks: Int,
+    val branchName: String,
+    val userInfo: UserInfo?,
+    val watchers: Int
 )
