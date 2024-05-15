@@ -1,9 +1,7 @@
 package com.demo.repositoriesviewer.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -11,41 +9,26 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentAuthBinding
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.demo.repositoriesviewer.R
+import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AuthFragment : Fragment() {
+class AuthFragment : Fragment(R.layout.fragment_auth) {
 
-    private var _binding: FragmentAuthBinding? = null
-    private val binding: FragmentAuthBinding
-        get() = _binding
-            ?: throw java.lang.RuntimeException("FragmentAuthBinding == null")
+    private val binding by viewBinding(FragmentAuthBinding::bind)
 
     private val authViewModel: AuthViewModel by viewModels()
 
     private var toastMessage: Toast? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAuthBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         bindViewModel()
         setListeners()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun launchFragment() {
