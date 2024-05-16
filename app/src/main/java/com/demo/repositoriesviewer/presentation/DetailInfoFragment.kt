@@ -3,39 +3,27 @@ package com.demo.repositoriesviewer.presentation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
+import com.demo.repositoriesviewer.R
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailInfoFragment : Fragment() {
+class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
 
     private val args by navArgs<DetailInfoFragmentArgs>()
 
-    private var _binding: FragmentDetailInfoBinding? = null
-    private val binding: FragmentDetailInfoBinding
-        get() = _binding ?: throw java.lang.RuntimeException("FragmentDetailInfoBinding == null")
+    private val binding by viewBinding(FragmentDetailInfoBinding::bind)
 
     private val repositoryInfoViewModel: RepositoryInfoViewModel by viewModels()
 
     private var toastMessage: Toast? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDetailInfoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,11 +31,6 @@ class DetailInfoFragment : Fragment() {
         repositoryInfoViewModel.loadData(args.repoId)
         bindViewModel()
         setListeners()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun bindViewModel() {
