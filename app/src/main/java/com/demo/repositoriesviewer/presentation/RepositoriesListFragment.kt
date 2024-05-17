@@ -7,26 +7,26 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.demo.repositoriesviewer.R
-import by.kirich1409.viewbindingdelegate.viewBinding
-import javax.inject.Inject
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
 
-    @Inject
-    lateinit var repoListAdapter: RepoListAdapter
-
     private val binding by viewBinding(FragmentRepositoriesListBinding::bind)
 
     private val repositoriesListViewModel: RepositoriesListViewModel by viewModels()
+
+    private val repoListAdapter by lazy {
+        RepoListAdapter(requireContext())
+    }
 
     private var toastMessage: Toast? = null
 
