@@ -28,4 +28,9 @@
     <string name="unknown_error">Неизвестная ошибка: %s</string>
     <string name="validation_failed_error">Проверка не удалась, или конечная точка подверглась спаму</string>
     <string name="title_repositories">Репозитории</string>
+
+    <string name="http_401_error">HTTP 401 </string>
+    <string name="http_403_error">HTTP 403 </string>
+    <string name="http_404_error">HTTP 404 </string>
+    <string name="http_422_error">HTTP 422 </string>
 </resources>

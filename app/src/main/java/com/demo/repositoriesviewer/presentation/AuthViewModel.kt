@@ -4,15 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.InetAddress
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -30,8 +28,12 @@ class AuthViewModel @Inject constructor(
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
+    private val notChar = "^\\w*\$"
+    private val inCyrillic = ".*\\p{InCyrillic}.*"
+    private val valueIsEmpty = ""
+
     init {
-        val token = appRepository.getToken() ?: VALUE_IS_EMPTY
+        val token = appRepository.getToken() ?: valueIsEmpty
         _token.value = token
         if (token.isNotBlank()) {
             onSignButtonPressed(token = token)
@@ -40,73 +42,44 @@ class AuthViewModel @Inject constructor(
 
     fun onSignButtonPressed(token: String?) {
         viewModelScope.launch {
-            if (isInternetAvailable()) {
-                token?.let { token ->
-                    _state.value = State.Loading
-                    if (tokenIsValid(newToken = token)) {
-                        try {
-                            appRepository.signIn(token = token)
-                            _token.value = token
-                            appRepository.saveToken(newToken = token)
-                            _actions.send(Action.RouteToMain)
-                        } catch (e: RuntimeException) {
-                            _actions.send(Action.ShowError(message = e.message.toString()))
-                        }
-                        _state.value = State.Idle
+            token?.let { token ->
+                _state.value = State.Loading
+                if (tokenIsValid(newToken = token)) {
+                    try {
+                        appRepository.signIn(token = token)
+                        _token.value = token
+                        appRepository.saveToken(newToken = token)
+                        _actions.send(Action.RouteToMain)
+                    } catch (e: RuntimeException) {
+                        _actions.send(Action.ShowError(message = e.message.toString()))
                     }
+                    _state.value = State.Idle
                 }
-            } else {
-                _actions.send(Action.ShowError(message = INTERNET_ACCESS_ERROR))
             }
-        }
-    }
 
-    private suspend fun isInternetAvailable(): Boolean {
-        return try {
-            val ipAddress: InetAddress = withContext(Dispatchers.IO) {
-                InetAddress.getByName(AVAILABLE_ADDRESS)
-            }
-            !ipAddress.equals(VALUE_IS_EMPTY)
-        } catch (e: Exception) {
-            false
         }
     }
 
     private fun tokenIsValid(newToken: String?): Boolean {
         if (newToken.isNullOrBlank()) {
-            _state.value = State.InvalidInput(reason = VALUE_NOT_ENTERED)
+            _state.value = State.InvalidInput(reason = R.string.value_not_entered)
             return false
         }
-        if (Pattern.matches(IN_CYRILLIC, newToken)) {
-            _state.value = State.InvalidInput(reason = VALUE_INVALID)
+        if (Pattern.matches(inCyrillic, newToken)) {
+            _state.value = State.InvalidInput(reason = R.string.value_invalid)
             return false
         }
-        if (!Pattern.matches(NOT_CHAR, newToken)) {
-            _state.value = State.InvalidInput(reason = UNEXPECTED_CHAR)
+        if (!Pattern.matches(notChar, newToken)) {
+            _state.value = State.InvalidInput(reason = R.string.unexpected_char)
             return false
         }
         return true
     }
 
-    companion object {
-        const val HTTP_401_ERROR = "HTTP 401 "
-        const val HTTP_403_ERROR = "HTTP 403 "
-        const val HTTP_404_ERROR = "HTTP 404 "
-        const val HTTP_422_ERROR = "HTTP 422 "
-        const val AVAILABLE_ADDRESS = "api.github.com"
-        const val NOT_CHAR = "^\\w*\$"
-        const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
-        const val INTERNET_ACCESS_ERROR = "Internet access error"
-        const val UNEXPECTED_CHAR = "Unexpected char"
-        const val VALUE_INVALID = "Value invalid"
-        const val VALUE_IS_EMPTY = ""
-        const val VALUE_NOT_ENTERED = "Value is not entered"
-    }
-
     sealed interface State {
         object Idle : State
         object Loading : State
-        data class InvalidInput(val reason: String) : State
+        data class InvalidInput(val reason: Int) : State
     }
 
     sealed interface Action {

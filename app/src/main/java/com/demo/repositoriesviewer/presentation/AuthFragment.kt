@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 import com.demo.repositoriesviewer.R
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class AuthFragment : Fragment(R.layout.fragment_auth) {
@@ -53,10 +56,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             binding.tilAuthorization.error =
                 if (state is AuthViewModel.State.InvalidInput) {
                     when (state.reason) {
-                        AuthViewModel.VALUE_INVALID -> getString(R.string.value_invalid)
-                        AuthViewModel.UNEXPECTED_CHAR -> getString(R.string.unexpected_char)
-                        AuthViewModel.VALUE_NOT_ENTERED -> getString(R.string.value_not_entered)
-                        else -> state.reason
+                        R.string.value_invalid -> getString(R.string.value_invalid)
+                        R.string.unexpected_char -> getString(R.string.unexpected_char)
+                        R.string.value_not_entered -> getString(R.string.value_not_entered)
+                        else -> String.format(getString(R.string.unknown_error), state.reason)
                     }
                 } else null
         }
@@ -74,8 +77,20 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private fun setListeners() {
         with(binding) {
             signButton.setOnClickListener {
-                val token: String = etAuthorization.text.toString()
-                authViewModel.onSignButtonPressed(token = token)
+                val deferredInternetAvailable = lifecycleScope.async {
+                    withContext(Dispatchers.IO) {
+                        InternetCheck.isInternetAvailable()
+                    }
+                }
+                lifecycleScope.launch {
+                    val isInternetAvailable = deferredInternetAvailable.await()
+                    if (isInternetAvailable) {
+                        val token: String = etAuthorization.text.toString()
+                        authViewModel.onSignButtonPressed(token = token)
+                    } else {
+                        showToast(message = getString(R.string.internet_access_error))
+                    }
+                }
             }
             etAuthorization.addTextChangedListener {
                 tilAuthorization.error = null
@@ -84,17 +99,14 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun showError(error: String) {
-        with(AuthViewModel) {
-            val message = when (error) {
-                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-                HTTP_403_ERROR -> getString(R.string.forbidden_error)
-                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-                INTERNET_ACCESS_ERROR -> getString(R.string.internet_access_error)
-                else -> String.format(getString(R.string.unknown_error), error)
-            }
-            showToast(message = message)
+        val message = when (error) {
+            getString(R.string.http_401_error) -> getString(R.string.requires_authentication_error)
+            getString(R.string.http_403_error) -> getString(R.string.forbidden_error)
+            getString(R.string.http_404_error) -> getString(R.string.resource_not_found_error)
+            getString(R.string.http_422_error) -> getString(R.string.validation_failed_error)
+            else -> String.format(getString(R.string.unknown_error), error)
         }
+        showToast(message = message)
     }
 
     private fun showToast(message: String) {
