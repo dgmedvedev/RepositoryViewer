@@ -2,6 +2,7 @@ package com.demo.repositoriesviewer.data.repository
 
 import android.content.Context
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
+import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.storage.KeyValueStorage
 import com.demo.repositoriesviewer.domain.models.Repo
@@ -13,12 +14,9 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-class AppRepositoryImpl(
-    context: Context,
-    private val apiService: ApiService
-) :
-    AppRepository {
+class AppRepositoryImpl(context: Context) : AppRepository {
 
+    private val apiService: ApiService = ApiFactory.apiService
     private val keyValueStorage = KeyValueStorage(context = context)
     private val mapper = RepoMapper
     private var userName: String? = null

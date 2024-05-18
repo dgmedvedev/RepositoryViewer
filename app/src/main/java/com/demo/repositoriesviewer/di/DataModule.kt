@@ -1,8 +1,6 @@
 package com.demo.repositoriesviewer.di
 
 import android.content.Context
-import com.demo.repositoriesviewer.data.network.ApiFactory
-import com.demo.repositoriesviewer.data.network.ApiService
 import com.demo.repositoriesviewer.data.repository.AppRepositoryImpl
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.Module
@@ -18,19 +16,7 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideApiService(): ApiService {
-        return ApiFactory.apiService
-    }
-
-    @Provides
-    @Singleton
-    fun provideAppRepository(
-        @ApplicationContext context: Context,
-        apiService: ApiService
-    ): AppRepository {
-        return AppRepositoryImpl(
-            context = context,
-            apiService = apiService
-        )
+    fun provideAppRepository(@ApplicationContext context: Context): AppRepository {
+        return AppRepositoryImpl(context = context)
     }
 }
