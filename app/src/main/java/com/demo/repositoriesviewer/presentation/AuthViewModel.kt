@@ -28,14 +28,10 @@ class AuthViewModel @Inject constructor(
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
-    private val notChar = "^\\w*\$"
-    private val inCyrillic = ".*\\p{InCyrillic}.*"
-    private val valueIsEmpty = ""
-
     init {
-        val token = appRepository.getToken() ?: valueIsEmpty
+        val token = appRepository.getToken()
         _token.value = token
-        if (token.isNotBlank()) {
+        if (!token.isNullOrBlank()) {
             onSignButtonPressed(token = token)
         }
     }
@@ -65,15 +61,20 @@ class AuthViewModel @Inject constructor(
             _state.value = State.InvalidInput(reason = R.string.value_not_entered)
             return false
         }
-        if (Pattern.matches(inCyrillic, newToken)) {
+        if (Pattern.matches(IN_CYRILLIC, newToken)) {
             _state.value = State.InvalidInput(reason = R.string.value_invalid)
             return false
         }
-        if (!Pattern.matches(notChar, newToken)) {
+        if (!Pattern.matches(NOT_CHAR, newToken)) {
             _state.value = State.InvalidInput(reason = R.string.unexpected_char)
             return false
         }
         return true
+    }
+
+    private companion object {
+        const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
+        const val NOT_CHAR = "^\\w*\$"
     }
 
     sealed interface State {
