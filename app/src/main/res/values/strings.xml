@@ -28,4 +28,9 @@
     <string name="unknown_error">Unknown error: %s</string>
     <string name="validation_failed_error">Validation failed, or the endpoint has been spammed</string>
     <string name="title_repositories">Repositories</string>
+
+    <string name="http_401_error">"HTTP 401 "</string>
+    <string name="http_403_error">"HTTP 403 "</string>
+    <string name="http_404_error">"HTTP 404 "</string>
+    <string name="http_422_error">"HTTP 422 "</string>
 </resources>

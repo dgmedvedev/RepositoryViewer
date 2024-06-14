@@ -91,17 +91,15 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
     }
 
     private fun showError(error: String) {
-        with(RepositoryInfoViewModel) {
-            val message = when (error) {
-                HTTP_401_ERROR -> getString(R.string.requires_authentication_error)
-                HTTP_403_ERROR -> getString(R.string.forbidden_error)
-                HTTP_404_ERROR -> getString(R.string.resource_not_found_error)
-                HTTP_422_ERROR -> getString(R.string.validation_failed_error)
-                OWNER_NAME_IS_NULL_OR_BLANK -> getString(R.string.owner_name_is_null_or_blank)
-                else -> getString(R.string.unknown_error)
-            }
-            showToast(message = message)
+        val message = when (error) {
+            getString(R.string.http_401_error) -> getString(R.string.requires_authentication_error)
+            getString(R.string.http_403_error) -> getString(R.string.forbidden_error)
+            getString(R.string.http_404_error) -> getString(R.string.resource_not_found_error)
+            getString(R.string.http_422_error) -> getString(R.string.validation_failed_error)
+            RepositoryInfoViewModel.OWNER_NAME_IS_NULL_OR_BLANK -> getString(R.string.owner_name_is_null_or_blank)
+            else -> String.format(getString(R.string.unknown_error), error)
         }
+        showToast(message = message)
     }
 
     private fun showToast(message: String) {
