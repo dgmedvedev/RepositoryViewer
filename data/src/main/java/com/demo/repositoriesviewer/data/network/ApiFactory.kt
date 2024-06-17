@@ -3,14 +3,28 @@ package com.demo.repositoriesviewer.data.network
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object ApiFactory {
+class ApiFactory private constructor() {
 
-    private const val BASE_URL = "https://api.github.com/"
+    companion object {
 
-    private val retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
-        .build()
+        private const val BASE_URL = "https://api.github.com/"
 
-    val apiService: ApiService = retrofit.create(ApiService::class.java)
+        private val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+
+        @Volatile
+        private var instanceApiService: ApiService? = null
+
+        fun getInstanceApiService(): ApiService {
+            instanceApiService?.let { return it }
+            synchronized(ApiFactory::class.java) {
+                instanceApiService?.let { return it }
+                val apiService: ApiService = retrofit.create(ApiService::class.java)
+                instanceApiService = apiService
+                return apiService
+            }
+        }
+    }
 }
