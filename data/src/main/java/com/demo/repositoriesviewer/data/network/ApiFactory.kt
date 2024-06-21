@@ -5,27 +5,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiFactory private constructor() {
 
-    private val retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
-        .build()
-
-    val apiService: ApiService = retrofit.create(ApiService::class.java)
-
     companion object {
 
         private const val BASE_URL = "https://api.github.com/"
 
         @Volatile
-        private var instance: ApiFactory? = null
+        private var instanceApiService: ApiService? = null
 
-        fun getInstance(): ApiFactory {
-            instance?.let { return it }
+        fun getInstanceApiService(): ApiService {
+            instanceApiService?.let { return it }
             synchronized(ApiFactory::class.java) {
-                instance?.let { return it }
-                val apiFactory = ApiFactory()
-                instance = apiFactory
-                return apiFactory
+                instanceApiService?.let { return it }
+
+                val retrofit = Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(BASE_URL)
+                    .build()
+
+                val apiService = retrofit.create(ApiService::class.java)
+                instanceApiService = apiService
+
+                return apiService
             }
         }
     }
