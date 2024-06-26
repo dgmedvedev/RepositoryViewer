@@ -35,39 +35,29 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
 
     private fun bindViewModel() {
         repositoryInfoViewModel.state.observe(viewLifecycleOwner) { state ->
+            viewIsVisible()
             if (state is RepositoryInfoViewModel.State.Loaded) {
-                binding.repositoryName.text = state.githubRepo.name
-                binding.tvRepoUrl.text = state.githubRepo.url
-                binding.tvLicense.text =
-                    state.githubRepo.license?.spdxId
-                        ?: getString(R.string.without_a_license)
-                binding.tvStars.text = state.githubRepo.stars.toString()
-                binding.tvForks.text = state.githubRepo.forks.toString()
-                binding.tvWatchers.text = state.githubRepo.watchers.toString()
+                setLayoutParams(state)
             }
             if (state is RepositoryInfoViewModel.State.Error) {
                 showError(error = state.error)
             }
             if (state is RepositoryInfoViewModel.State.Loading) {
                 viewIsInvisible()
-            } else {
-                viewIsVisible()
             }
         }
         repositoryInfoViewModel.readmeState.observe(viewLifecycleOwner) { readmeState ->
-            binding.progressBar.visibility =
-                if (readmeState == RepositoryInfoViewModel.ReadmeState.Loading) {
-                    binding.tvReadme.visibility = View.GONE
-                    View.VISIBLE
-                } else {
-                    binding.tvReadme.visibility = View.VISIBLE
-                    View.GONE
-                }
+            binding.tvReadme.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
             binding.tvReadme.text =
                 if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) readmeState.markdown
                 else getString(R.string.readme_empty)
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
                 showError(error = readmeState.error)
+            }
+            if (readmeState is RepositoryInfoViewModel.ReadmeState.Loading) {
+                binding.tvReadme.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
             }
         }
     }
@@ -106,6 +96,19 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
         toastMessage?.cancel()
         toastMessage = Toast.makeText(context, message, Toast.LENGTH_SHORT)
         toastMessage?.show()
+    }
+
+    private fun setLayoutParams(state: RepositoryInfoViewModel.State.Loaded) {
+        with(binding) {
+            repositoryName.text = state.githubRepo.name
+            tvRepoUrl.text = state.githubRepo.url
+            tvLicense.text =
+                state.githubRepo.license?.spdxId
+                    ?: getString(R.string.without_a_license)
+            tvStars.text = state.githubRepo.stars.toString()
+            tvForks.text = state.githubRepo.forks.toString()
+            tvWatchers.text = state.githubRepo.watchers.toString()
+        }
     }
 
     private fun viewIsInvisible() {
