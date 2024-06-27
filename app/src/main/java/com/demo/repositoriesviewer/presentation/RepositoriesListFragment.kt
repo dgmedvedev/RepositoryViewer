@@ -31,9 +31,6 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.repoRecyclerView.adapter = repoListAdapter
-        bindViewModel()
-        setListeners()
         val deferredInternetAvailable = lifecycleScope.async {
             InternetCheck.isInternetAvailable()
         }
@@ -45,6 +42,10 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
                 showToast(message = getString(R.string.internet_access_error))
             }
         }
+
+        binding.repoRecyclerView.adapter = repoListAdapter
+        bindViewModel()
+        setListeners()
     }
 
     private fun launchFragment(repoId: String) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -32,7 +33,15 @@ class AuthViewModel @Inject constructor(
         val token = appRepository.getToken()
         _token.value = token
         if (!token.isNullOrBlank()) {
-            onSignButtonPressed(token = token)
+            val deferredInternetAvailable = viewModelScope.async {
+                InternetCheck.isInternetAvailable()
+            }
+            viewModelScope.launch {
+                val isInternetAvailable = deferredInternetAvailable.await()
+                if (isInternetAvailable) {
+                    onSignButtonPressed(token = token)
+                }
+            }
         }
     }
 

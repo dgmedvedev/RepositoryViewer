@@ -7,12 +7,15 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
 import com.demo.repositoriesviewer.R
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
@@ -28,7 +31,18 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        repositoryInfoViewModel.loadData(args.repoId)
+        val deferredInternetAvailable = lifecycleScope.async {
+            InternetCheck.isInternetAvailable()
+        }
+        lifecycleScope.launch {
+            val isInternetAvailable = deferredInternetAvailable.await()
+            if (isInternetAvailable) {
+                repositoryInfoViewModel.loadData(args.repoId)
+            } else {
+                showToast(message = getString(R.string.internet_access_error))
+            }
+        }
+
         bindViewModel()
         setListeners()
     }
