@@ -12,10 +12,8 @@ import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
@@ -33,13 +31,8 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.repoRecyclerView.adapter = repoListAdapter
-        bindViewModel()
-        setListeners()
         val deferredInternetAvailable = lifecycleScope.async {
-            withContext(Dispatchers.IO) {
-                InternetCheck.isInternetAvailable()
-            }
+            InternetCheck.isInternetAvailable()
         }
         lifecycleScope.launch {
             val isInternetAvailable = deferredInternetAvailable.await()
@@ -49,6 +42,10 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
                 showToast(message = getString(R.string.internet_access_error))
             }
         }
+
+        binding.repoRecyclerView.adapter = repoListAdapter
+        bindViewModel()
+        setListeners()
     }
 
     private fun launchFragment(repoId: String) {
@@ -79,9 +76,7 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
     private fun setListeners() {
         repoListAdapter.onRepoClickListener = {
             val deferredInternetAvailable = lifecycleScope.async {
-                withContext(Dispatchers.IO) {
-                    InternetCheck.isInternetAvailable()
-                }
+                InternetCheck.isInternetAvailable()
             }
             lifecycleScope.launch {
                 val isInternetAvailable = deferredInternetAvailable.await()

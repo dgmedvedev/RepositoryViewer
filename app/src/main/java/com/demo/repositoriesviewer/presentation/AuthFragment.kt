@@ -14,9 +14,7 @@ import kotlinx.coroutines.launch
 import com.demo.repositoriesviewer.R
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class AuthFragment : Fragment(R.layout.fragment_auth) {
@@ -78,9 +76,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         with(binding) {
             signButton.setOnClickListener {
                 val deferredInternetAvailable = lifecycleScope.async {
-                    withContext(Dispatchers.IO) {
-                        InternetCheck.isInternetAvailable()
-                    }
+                    InternetCheck.isInternetAvailable()
                 }
                 lifecycleScope.launch {
                     val isInternetAvailable = deferredInternetAvailable.await()
