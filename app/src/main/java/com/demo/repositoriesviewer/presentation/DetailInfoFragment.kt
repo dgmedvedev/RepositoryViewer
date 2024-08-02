@@ -64,8 +64,11 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
             binding.tvReadme.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
             binding.tvReadme.text =
-                if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) readmeState.markdown
-                else getString(R.string.readme_empty)
+                if (readmeState is RepositoryInfoViewModel.ReadmeState.Loaded) {
+                    readmeState.markdown
+                } else {
+                    getString(R.string.readme_empty)
+                }
             if (readmeState is RepositoryInfoViewModel.ReadmeState.Error) {
                 showError(error = readmeState.error)
             }
