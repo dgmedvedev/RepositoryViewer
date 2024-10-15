@@ -1,57 +1,29 @@
 package com.demo.repositoriesviewer.presentation.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.ItemRepoBinding
 import com.demo.repositoriesviewer.domain.models.Repo
 
-class RepoListAdapter(private val context: Context) :
-    ListAdapter<Repo, RepoListAdapter.RepoListViewHolder>(RepoDiffCallback()) {
+class RepoListAdapter(private val onRepoClickListener: OnRepoClickListener) :
+    ListAdapter<Repo, RepoItemViewHolder>(RepoDiffCallback()) {
 
-    var onRepoClickListener: ((Repo) -> Unit)? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoItemViewHolder {
         val binding = ItemRepoBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return RepoListViewHolder(binding)
+        return RepoItemViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: RepoListViewHolder, position: Int) {
-        val repoItem = getItem(position)
-        val binding = holder.binding
-        val language = repoItem.language
-        val color = when (language) {
-            JAVA, JAVA_SCRIPT -> ContextCompat.getColor(context, R.color.yellow)
-            SWIFT -> ContextCompat.getColor(context, R.color.green)
-            else -> ContextCompat.getColor(context, R.color.purple)
-        }
-
-        binding.apply {
-            tvRepoName.text = repoItem.name
-            tvDescription.text = repoItem.description
-            tvLanguage.text = language
-            tvLanguage.setTextColor(color)
-
-            root.setOnClickListener {
-                onRepoClickListener?.invoke(repoItem)
-            }
-        }
+    override fun onBindViewHolder(holder: RepoItemViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(repositoryItem = item, listener = onRepoClickListener)
     }
 
-    companion object {
-        private const val JAVA = "Java"
-        private const val JAVA_SCRIPT = "JavaScript"
-        private const val SWIFT = "Swift"
+    interface OnRepoClickListener {
+        fun onRepoClick(repo: Repo)
     }
-
-    class RepoListViewHolder(val binding: ItemRepoBinding) :
-        RecyclerView.ViewHolder(binding.root)
 }
