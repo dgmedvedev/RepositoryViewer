@@ -81,6 +81,8 @@ class AppRepositoryImpl(context: Context) : AppRepository {
         return mapper.ownerDtoToDomain(ownerDto = ownerDto)
     }
 
+    override fun loggedIn(): Boolean = keyValueStorage.authToken != null
+
     private suspend fun getWatchers(repo: Repo): Int {
         val listWatchers = apiService.getListWatchers(
             ownerName = userName,
