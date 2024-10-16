@@ -25,7 +25,7 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list),
     private val repositoriesListViewModel: RepositoriesListViewModel by viewModels()
 
     private val repoListAdapter by lazy {
-        RepoListAdapter(this)
+        RepoListAdapter(onRepoClickListener = this)
     }
 
     private var toastMessage: Toast? = null
