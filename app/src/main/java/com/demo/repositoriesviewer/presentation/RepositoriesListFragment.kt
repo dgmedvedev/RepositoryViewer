@@ -10,20 +10,22 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.demo.repositoriesviewer.R
 import com.demo.repositoriesviewer.databinding.FragmentRepositoriesListBinding
+import com.demo.repositoriesviewer.domain.models.Repo
 import com.demo.repositoriesviewer.presentation.adapter.RepoListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
+class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list),
+    RepoListAdapter.OnRepoClickListener {
 
     private val binding by viewBinding(FragmentRepositoriesListBinding::bind)
 
     private val repositoriesListViewModel: RepositoriesListViewModel by viewModels()
 
     private val repoListAdapter by lazy {
-        RepoListAdapter(requireContext())
+        RepoListAdapter(onRepoClickListener = this)
     }
 
     private var toastMessage: Toast? = null
@@ -46,6 +48,20 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
         binding.repoRecyclerView.adapter = repoListAdapter
         bindViewModel()
         setListeners()
+    }
+
+    override fun onRepoClick(repo: Repo) {
+        val deferredInternetAvailable = lifecycleScope.async {
+            InternetCheck.isInternetAvailable()
+        }
+        lifecycleScope.launch {
+            val isInternetAvailable = deferredInternetAvailable.await()
+            if (isInternetAvailable) {
+                launchFragment(repo.id)
+            } else {
+                showToast(message = getString(R.string.internet_access_error))
+            }
+        }
     }
 
     private fun launchFragment(repoId: String) {
@@ -74,19 +90,6 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list) {
     }
 
     private fun setListeners() {
-        repoListAdapter.onRepoClickListener = {
-            val deferredInternetAvailable = lifecycleScope.async {
-                InternetCheck.isInternetAvailable()
-            }
-            lifecycleScope.launch {
-                val isInternetAvailable = deferredInternetAvailable.await()
-                if (isInternetAvailable) {
-                    launchFragment(it.id)
-                } else {
-                    showToast(message = getString(R.string.internet_access_error))
-                }
-            }
-        }
         binding.signOut.setOnClickListener {
             findNavController().popBackStack()
         }
