@@ -32,17 +32,17 @@ class AuthViewModel @Inject constructor(
     init {
         val token = appRepository.getToken()
         _token.value = token
-        if (!token.isNullOrBlank()) {
-            val deferredInternetAvailable = viewModelScope.async {
-                InternetCheck.isInternetAvailable()
-            }
-            viewModelScope.launch {
-                val isInternetAvailable = deferredInternetAvailable.await()
-                if (isInternetAvailable) {
-                    onSignButtonPressed(token = token)
-                }
-            }
-        }
+//        if (!token.isNullOrBlank()) {
+//            val deferredInternetAvailable = viewModelScope.async {
+//                InternetCheck.isInternetAvailable()
+//            }
+//            viewModelScope.launch {
+//                val isInternetAvailable = deferredInternetAvailable.await()
+//                if (isInternetAvailable) {
+//                    onSignButtonPressed(token = token)
+//                }
+//            }
+//        }
     }
 
     fun onSignButtonPressed(token: String?) {
@@ -61,7 +61,6 @@ class AuthViewModel @Inject constructor(
                     _state.value = State.Idle
                 }
             }
-
         }
     }
 
