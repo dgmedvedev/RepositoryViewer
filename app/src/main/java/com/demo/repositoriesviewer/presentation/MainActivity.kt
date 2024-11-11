@@ -11,6 +11,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private val keyValueStorage: KeyValueStorage by lazy {
+        KeyValueStorage.getInstance(applicationContext)
+    }
+
     private val navController: NavController by lazy {
         findNavController(R.id.container)
     }
@@ -22,8 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        val keyValueStorage = KeyValueStorage(this)
         val token = keyValueStorage.authToken
 
         if (token.isNullOrBlank()) {

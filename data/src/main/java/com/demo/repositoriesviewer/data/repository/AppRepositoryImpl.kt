@@ -17,7 +17,7 @@ import java.net.URL
 class AppRepositoryImpl(context: Context) : AppRepository {
 
     private val apiService: ApiService = ApiFactory.getInstanceApiService()
-    private val keyValueStorage = KeyValueStorage(context = context)
+    private val keyValueStorage = KeyValueStorage.getInstance(context = context)
     private val mapper = RepoMapper
     private var userName: String? = null
     private var listRepos: List<Repo> = mutableListOf()
