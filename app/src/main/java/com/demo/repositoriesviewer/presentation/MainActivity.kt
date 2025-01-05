@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val keyValueStorage = KeyValueStorage(this)
+        val keyValueStorage = KeyValueStorage.get()
         val token = keyValueStorage.authToken
 
         val navController = findNavController(R.id.container)
