@@ -13,13 +13,16 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-object AppRepositoryImpl : AppRepository {
+class AppRepositoryImpl(private val keyValueStorage: KeyValueStorage) : AppRepository {
 
     private val apiService: ApiService = ApiFactory.getInstanceApiService()
-    private val keyValueStorage: KeyValueStorage = KeyValueStorage.get()
     private val mapper: RepoMapper = RepoMapper
-    private var userName: String? = null
+    private var userName: String = ""
     private var listRepos: List<Repo> = mutableListOf()
+
+    override fun clearToken() {
+        keyValueStorage.clear()
+    }
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -30,6 +33,8 @@ object AppRepositoryImpl : AppRepository {
     }
 
     override suspend fun getRepositories(): List<Repo> {
+        val token = keyValueStorage.authToken
+        token?.let { userName = signIn(it).name }
         val fullListReposDto = apiService.getListRepos(userName = userName)
         listRepos =
             mapper.mapListReposDtoToDomain(listReposDto = fullListReposDto)

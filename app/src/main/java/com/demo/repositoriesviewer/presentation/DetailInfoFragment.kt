@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.demo.repositoriesviewer.databinding.FragmentDetailInfoBinding
@@ -93,7 +94,15 @@ class DetailInfoFragment : Fragment(R.layout.fragment_detail_info) {
             findNavController().popBackStack()
         }
         binding.signOut.setOnClickListener {
-            findNavController().popBackStack(R.id.authFragment, false)
+            repositoryInfoViewModel.onSignOutButtonPressed()
+//            findNavController().popBackStack(R.id.authFragment, false)
+            findNavController().navigate(
+                DetailInfoFragmentDirections.actionDetailInfoFragmentToAuthFragment(),
+                NavOptions.Builder()
+                    .setPopUpTo(R.id.detailInfoFragment, true)
+                    .setPopUpTo(R.id.repositoriesListFragment, true)
+                    .build()
+            )
         }
     }
 

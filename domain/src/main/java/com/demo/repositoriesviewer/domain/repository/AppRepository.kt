@@ -18,6 +18,8 @@ interface AppRepository {
 
     suspend fun signIn(token: String): UserInfo
 
+    fun clearToken()
+
     fun getToken(): String?
 
     fun saveToken(newToken: String)

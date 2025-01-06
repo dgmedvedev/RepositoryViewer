@@ -91,7 +91,10 @@ class RepositoriesListFragment : Fragment(R.layout.fragment_repositories_list),
 
     private fun setListeners() {
         binding.signOut.setOnClickListener {
-            findNavController().popBackStack()
+            repositoriesListViewModel.onSignOutButtonPressed()
+            findNavController().navigate(
+                RepositoriesListFragmentDirections.actionRepositoriesListFragmentToAuthFragment()
+            )
         }
     }
 

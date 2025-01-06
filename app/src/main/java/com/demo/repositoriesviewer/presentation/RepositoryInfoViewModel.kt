@@ -70,6 +70,10 @@ class RepositoryInfoViewModel @Inject constructor(
         }
     }
 
+    fun onSignOutButtonPressed() {
+        appRepository.clearToken()
+    }
+
     private suspend fun downloadRepoDetails(repoId: String): RepoDetails =
         withContext(Dispatchers.IO) {
             appRepository.getRepository(repoId = repoId)
