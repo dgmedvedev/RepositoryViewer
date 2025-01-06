@@ -12,6 +12,7 @@
     <string name="readme_empty">Readme.md пуст</string>
     <string name="repository_name">Имя репозитория</string>
     <string name="stars">stars</string>
+    <string name="title_repositories">Репозитории</string>
     <string name="type_the_token">Личный токен доступа</string>
     <string name="value_not_entered">Введите свой личный токен доступа</string>
     <string name="value_invalid">Недопустимый токен</string>
@@ -27,7 +28,6 @@
     <string name="unexpected_char">Неожиданный символ</string>
     <string name="unknown_error">Неизвестная ошибка: %s</string>
     <string name="validation_failed_error">Проверка не удалась, или конечная точка подверглась спаму</string>
-    <string name="title_repositories">Репозитории</string>
 
     <string name="http_401_error">"HTTP 401 "</string>
     <string name="http_403_error">"HTTP 403 "</string>

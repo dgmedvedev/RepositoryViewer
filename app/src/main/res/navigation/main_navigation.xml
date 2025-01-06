@@ -22,12 +22,18 @@
         <action
             android:id="@+id/action_repositoriesListFragment_to_detailInfoFragment"
             app:destination="@id/detailInfoFragment" />
+        <action
+            android:id="@+id/action_repositoriesListFragment_to_authFragment"
+            app:destination="@id/authFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailInfoFragment"
         android:name="com.demo.repositoriesviewer.presentation.DetailInfoFragment"
         android:label="DetailInfoFragment"
         tools:layout="@layout/fragment_detail_info">
+        <action
+            android:id="@+id/action_detailInfoFragment_to_authFragment"
+            app:destination="@id/authFragment" />
         <argument
             android:name="repoId"
             app:argType="string" />

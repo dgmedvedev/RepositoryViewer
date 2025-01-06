@@ -2,6 +2,7 @@ package com.demo.repositoriesviewer.di
 
 import android.content.Context
 import com.demo.repositoriesviewer.data.repository.AppRepositoryImpl
+import com.demo.repositoriesviewer.data.storage.KeyValueStorage
 import com.demo.repositoriesviewer.domain.repository.AppRepository
 import dagger.Module
 import dagger.Provides
@@ -16,7 +17,13 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(@ApplicationContext context: Context): AppRepository {
-        return AppRepositoryImpl(context = context)
+    fun provideKeyValueStorage(@ApplicationContext applicationContext: Context): KeyValueStorage {
+        return KeyValueStorage(context = applicationContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppRepository(keyValueStorage: KeyValueStorage): AppRepository {
+        return AppRepositoryImpl(keyValueStorage = keyValueStorage)
     }
 }

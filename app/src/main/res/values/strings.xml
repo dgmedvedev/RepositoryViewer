@@ -12,6 +12,7 @@
     <string name="readme_empty">The Readme.md file is empty</string>
     <string name="repository_name">Repository name</string>
     <string name="stars">stars</string>
+    <string name="title_repositories">Repositories</string>
     <string name="type_the_token">Personal access token</string>
     <string name="value_not_entered">Enter your personal access token</string>
     <string name="value_invalid">Invalid token</string>
@@ -27,7 +28,6 @@
     <string name="unexpected_char">Unexpected char</string>
     <string name="unknown_error">Unknown error: %s</string>
     <string name="validation_failed_error">Validation failed, or the endpoint has been spammed</string>
-    <string name="title_repositories">Repositories</string>
 
     <string name="http_401_error">"HTTP 401 "</string>
     <string name="http_403_error">"HTTP 403 "</string>

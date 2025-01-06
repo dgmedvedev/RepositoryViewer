@@ -38,6 +38,10 @@ class RepositoriesListViewModel @Inject constructor(
         }
     }
 
+    fun onSignOutButtonPressed() {
+        appRepository.clearToken()
+    }
+
     private fun showError(error: Throwable) {
         when (error) {
             is Exception -> _state.value = State.Error(error = error.message.toString())

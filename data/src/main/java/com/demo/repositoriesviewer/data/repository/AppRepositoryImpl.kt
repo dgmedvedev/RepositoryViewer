@@ -1,6 +1,5 @@
 package com.demo.repositoriesviewer.data.repository
 
-import android.content.Context
 import com.demo.repositoriesviewer.data.mapper.RepoMapper
 import com.demo.repositoriesviewer.data.network.ApiFactory
 import com.demo.repositoriesviewer.data.network.ApiService
@@ -14,13 +13,16 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-class AppRepositoryImpl(context: Context) : AppRepository {
+class AppRepositoryImpl(private val keyValueStorage: KeyValueStorage) : AppRepository {
 
     private val apiService: ApiService = ApiFactory.getInstanceApiService()
-    private val keyValueStorage = KeyValueStorage(context = context)
-    private val mapper = RepoMapper
-    private var userName: String? = null
+    private val mapper: RepoMapper = RepoMapper
+    private var userName: String = ""
     private var listRepos: List<Repo> = mutableListOf()
+
+    override fun clearToken() {
+        keyValueStorage.clear()
+    }
 
     override fun getToken(): String? {
         return keyValueStorage.authToken
@@ -31,6 +33,8 @@ class AppRepositoryImpl(context: Context) : AppRepository {
     }
 
     override suspend fun getRepositories(): List<Repo> {
+        val token = keyValueStorage.authToken
+        token?.let { userName = signIn(it).name }
         val fullListReposDto = apiService.getListRepos(userName = userName)
         listRepos =
             mapper.mapListReposDtoToDomain(listReposDto = fullListReposDto)
@@ -80,6 +84,8 @@ class AppRepositoryImpl(context: Context) : AppRepository {
         userName = ownerDto.login
         return mapper.ownerDtoToDomain(ownerDto = ownerDto)
     }
+
+    override fun loggedIn(): Boolean = keyValueStorage.authToken != null
 
     private suspend fun getWatchers(repo: Repo): Int {
         val listWatchers = apiService.getListWatchers(
