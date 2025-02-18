@@ -57,7 +57,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                         R.string.value_invalid -> getString(R.string.value_invalid)
                         R.string.unexpected_char -> getString(R.string.unexpected_char)
                         R.string.value_not_entered -> getString(R.string.value_not_entered)
-                        else -> String.format(getString(R.string.unknown_error), state.reason)
+                        else -> String.format(
+                            getString(R.string.unknown_error),
+                            state.reason.toString()
+                        )
                     }
                 } else null
         }

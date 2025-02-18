@@ -29,7 +29,7 @@ class AuthViewModel @Inject constructor(
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
     init {
-        val token = appRepository.getToken()
+        val token = appRepository.getToken() ?: EMPTY_TOKEN
         _token.value = token
     }
 
@@ -71,6 +71,7 @@ class AuthViewModel @Inject constructor(
     private companion object {
         const val IN_CYRILLIC = ".*\\p{InCyrillic}.*"
         const val NOT_CHAR = "^\\w*\$"
+        const val EMPTY_TOKEN = ""
     }
 
     sealed interface State {
